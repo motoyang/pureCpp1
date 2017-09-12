@@ -1,0 +1,4 @@
+#ifndef FACTORIAL_HPP
+#define FACTORIAL_HPP
+
+#endif // FACTORIAL_HPP
