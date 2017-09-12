@@ -20,6 +20,12 @@ struct Print
 
 #define __print(...)                    char UNIQUE_NAME(print_value_) = Print<__VA_ARGS__>()
 
+// 在check_type.cpp中实现
 int check_type_test(void);
+
+// 在has_member_test.cpp中实现
+int has_member_test1();
+void fibonacci_test();
+int router_test();
 
 #endif // FIRSTA_H
