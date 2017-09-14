@@ -68,11 +68,11 @@ void fibonacci_test()
 {
     START_FUNC();
 
-    do {
-        Timer t;
-        SHOW_NAME_AND_RESULT(fibonacci(45));
-        cout << "Elapsed " << t.elapsed() << " ms." << endl;
-    } while(false);
+//    do {
+//        Timer t;
+//        SHOW_NAME_AND_RESULT(fibonacci(45));
+//        cout << "Elapsed " << t.elapsed() << " ms." << endl;
+//    } while(false);
 
     do {
         Timer t2;

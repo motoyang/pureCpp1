@@ -5,7 +5,8 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     check_type.cpp \
-    has_member_test.cpp
+    has_member_test.cpp \
+    bind_test.cpp
 
 HEADERS += \
     check_type.hpp \
@@ -16,3 +17,5 @@ HEADERS += \
     cache.hpp \
     router.hpp \
     function_traits.hpp
+
+INCLUDEPATH += /usr/local/include ../include

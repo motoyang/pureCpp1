@@ -2,7 +2,15 @@
 #include "firstA.h"
 #include "check_type.hpp"
 
-class Foo {};
+class Foo {
+public:
+    void f1();
+    void f2(int i);
+    float f3(double, char*, const char*, float&){return 1.0f;}
+    float f4(double, char*);
+};
+
+void f5(int, char*, float);
 
 template <typename T>
 auto func(T&&) -> T;
@@ -61,5 +69,28 @@ int check_type_test(void)
 //    std::cout << check_type<decltype(func<Foo&>)>() << std::endl;
 //    std::cout << check_type<decltype(func<Foo&&>)>() << std::endl;
 
+    SHOW_NAME_AND_RESULT(check_type<decltype(f5)>());
+    SHOW_NAME_AND_RESULT(check_type<decltype(&f5)>());
+    SHOW_NAME_AND_RESULT(check_type<decltype(&Foo::f3)>());
+
     return 0;
 }
+
+
+template<typename F>
+void check_type_test3(F f)
+{
+    std::cout << check_type<decltype(std::forward<F>(f))>() << std::endl;
+}
+
+void fun(int, int) {}
+
+int check_type_test2()
+{
+    check_type_test3(&Foo::f3);
+
+    SHOW_NAME_AND_RESULT(get(fun));
+
+    return 0;
+}
+
