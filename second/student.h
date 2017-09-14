@@ -1,65 +1,51 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
-#include "purecpp1.h"
-
 class Student
 {
 public:
     Student();
     ~Student();
+
     std::string getName();
-    void setName(std::string name);
+    void setName(const std::string& name);
+    void setNA(const std::string& name, int age);
     int getAge();
     void setAge(int age);
     void print();
 
+    void set3Value(int i, long l, const char* n);
+    void set4Value(int i, const char* n, float f, long l);
+    int getI() const
+    {
+        return i_1;
+    }
+    float getF() const
+    {
+        return f_4;
+    }
+    std::string getS() const
+    {
+        return s_3;
+    }
+    long getL() const
+    {
+        return l_2;
+    }
+    std::tuple<int, long, std::string, float> get4Value() const
+    {
+        return std::make_tuple(i_1, l_2, s_3, f_4);
+    }
+    void print4();
+
 private:
     std::string name;
     int age;
+
+    int i_1;
+    long l_2;
+    std::string s_3;
+    float f_4;
 };
-/*
-class LuaStudent
-{
-    template<typename F>
-    static int route(F&& f, lua_State *ls)
-    {
-//        SHOW_NAME_AND_RESULT(check_type<std::forward<F>(f)>)
-        return 0;
-    }
-
-    static int l_setName(lua_State *ls)
-    {
-        route(&Student::setName, ls);
-        return 0;
-    }
-
-    static int l_setAge(lua_State *ls)
-    {
-        return 0;
-    }
-    static int l_print(lua_State *ls)
-    {
-        return 0;
-    }
-
-public:
-//    static const std::string sm_mateTableName = "cc.Student";
-
-    const static luaL_Reg sm_mateReg [];
-//    = {
-//        {"setName", LuaStudent::l_setName},
-//        {"setAge", LuaStudent::l_setAge},
-//        {"print", LuaStudent::l_print},
-//        {NULL, NULL}
-//    };
-
-    static const luaL_Reg sm_functionReg [];
-//    = {
-//        {NULL, NULL}
-//    };
-};
-*/
-void lua_test7();
 
 #endif // STUDENT_H

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include "lua.hpp"
-#include "student.h"
+#include "luaobject.h"
 #include "purecpp1.h"
 
 using namespace std;
@@ -361,7 +361,7 @@ int main(int argc, char *argv[])
 //    lua_test5();
 //    lua_test6();
     lua_test7();
-
+    lua_test8();
 
 
     cout << "222Hello World!" << endl;

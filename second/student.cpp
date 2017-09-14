@@ -1,7 +1,5 @@
 #include <iostream>
-#include <lua.hpp>
-#include "luapp.h"
-#include "luaclass.h"
+#include "purecpp1.h"
 #include "student.h"
 
 using namespace std;
@@ -22,9 +20,15 @@ string Student::getName()
     return name;
 }
 
-void Student::setName(string name)
+void Student::setName(const string& name)
 {
     this->name = name;
+}
+
+void Student::setNA(const string &name, int age)
+{
+    setName(name);
+    setAge(age);
 }
 
 int Student::getAge()
@@ -42,22 +46,25 @@ void Student::print()
     cout<<"My name is: "<<name<<", and my age is "<<age<<endl;
 }
 
-// ---
-
-void lua_test7()
+void Student::set3Value(int i, long l, const char* n)
 {
-    START_FUNC();
+    i_1 = i;
+    l_2 = l;
+    s_3 = n;
+}
 
-    static const luaL_Reg lualibs[] =
-    {
-        {"base", luaopen_base},
-        {"io", luaopen_io},
-//        {"cc",luaopen_student},
-        {"cc", LuaStudent::openlib},
-        {NULL, NULL}
-    };
+void Student::set4Value(int i, const char *n, float f, long l)
+{
+    i_1 = i;
+    s_3 = n;
+    f_4 = f;
+    l_2 = l;
+}
 
-    LuaPP luapp;
-    luapp.requireLibs(lualibs);
-    luapp.doFile("hello8.lua");
+void Student::print4()
+{
+    SHOW_NAME_AND_RESULT(i_1);
+    SHOW_NAME_AND_RESULT(l_2);
+    SHOW_NAME_AND_RESULT(s_3);
+    SHOW_NAME_AND_RESULT(f_4);
 }

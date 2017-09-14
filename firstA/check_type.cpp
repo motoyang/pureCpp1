@@ -15,6 +15,14 @@ void f5(int, char*, float);
 template <typename T>
 auto func(T&&) -> T;
 
+using lua_State = char;
+
+auto f_getInteger    = [](lua_State * L, int idx) { return 12; };
+auto f_getString     = [](lua_State * L, int idx) { return "string"; };
+
+auto f1(lua_State * L, int idx) { return 122; }
+auto f2(lua_State * L, int idx) { return "string2"; }
+
 int check_type_test(void)
 {
     START_FUNC();
@@ -73,6 +81,11 @@ int check_type_test(void)
     SHOW_NAME_AND_RESULT(check_type<decltype(&f5)>());
     SHOW_NAME_AND_RESULT(check_type<decltype(&Foo::f3)>());
 
+    SHOW_NAME_AND_RESULT(check_type<decltype(f_getInteger)>());
+    SHOW_NAME_AND_RESULT(check_type<decltype(f_getString)>());
+
+    SHOW_NAME_AND_RESULT(check_type<decltype(f1)>());
+    SHOW_NAME_AND_RESULT(check_type<decltype(f2)>());
     return 0;
 }
 

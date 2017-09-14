@@ -6,7 +6,7 @@ CONFIG -= qt
 SOURCES += main.cpp \
     student.cpp \
     luapp.cpp \
-    luaclass.cpp
+    luaobject.cpp
 
 INCLUDEPATH += /usr/local/include ../include
 LIBS += -L/usr/local/lib -llua
@@ -18,4 +18,4 @@ HEADERS += \
     student.h \
     luapp.h \
     ../include/purecpp1.h \
-    luaclass.h
+    luaobject.h
