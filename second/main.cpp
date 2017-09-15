@@ -1,8 +1,9 @@
 #include <iostream>
 #include <sstream>
-#include "lua.hpp"
-#include "luaobject.h"
+#include <lua.hpp>
 #include "purecpp1.h"
+#include "luaobject.h"
+#include "luaauto.h"
 
 using namespace std;
 
@@ -360,10 +361,12 @@ int main(int argc, char *argv[])
 //    lua_test4();
 //    lua_test5();
 //    lua_test6();
-    lua_test7();
-    lua_test8();
+//    lua_test7();
+//    lua_test8();
+
+    lua_Auto_test1();
 
 
-    cout << "222Hello World!" << endl;
+    cout << "--- end." << endl;
     return 0;
 }
