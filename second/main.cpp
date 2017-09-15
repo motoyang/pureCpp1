@@ -362,6 +362,8 @@ int main(int argc, char *argv[])
 
     lua_Auto_test1();
 
+//    expandArgs([](auto t){std::cout << t << " <- " << std::endl;}, 1, 2.2, 3.3, "abcdefg");
+//    expandArgs([](auto t){printarg(t);}, 1, 2.2, 3.3, "abcdefg");
 
     cout << "--- end." << endl;
     return 0;

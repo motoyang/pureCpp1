@@ -1,4 +1,5 @@
 #include "precompiled.h"
+#include<tuple>
 #include "luapp.h"
 
 LuaPP::LuaPP()
@@ -52,5 +53,37 @@ bool LuaPP::doFile(const std::string& fname)
     }
 
     return r;
+}
+/*
+auto getFromLuaStack(lua_State* ls, int idx)
+{
+    std::tuple<> t;
+    switch (lua_type(ls, idx)) {
+    case LUA_TNIL:
+        std::tuple_cat(t, nullptr);
+
+    case LUA_TBOOLEAN:
+        std::tuple_cat(t, f_getBoolean(ls, idx));
+        break;
+
+    case LUA_TNUMBER:
+        return f_getNumber(ls, idx);
+
+    case LUA_TSTRING:
+        return f_getString(ls, idx);
+
+    default:
+//        return nullptr;
+        break;
+    }
+}
+*/
+template <typename F>
+void LuaPP::dumpStack(const F& f)
+{
+    int top = lua_gettop(m_ls);
+    for (int i = 1; i <= top; ++i) {
+        f(m_ls, i);
+    }
 }
 

@@ -16,6 +16,7 @@ HEADERS += \
     timer.hpp \
     cache.hpp \
     router.hpp \
-    function_traits.hpp
+    function_traits.hpp \
+    print_tuple.hpp
 
 INCLUDEPATH += /usr/local/include ../include

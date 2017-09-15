@@ -1,5 +1,6 @@
 #include <iostream>
 #include "firstA.h"
+#include "print_tuple.hpp"
 #include "factorial.hpp"
 #include "check_type.hpp"
 
@@ -64,6 +65,9 @@ int main(int argc, char *argv[])
     bind_test();
 
     tuple_test();
+
+
+    expand(1,2.3,3.5,"4aafa");
 
     return 0;
 }
