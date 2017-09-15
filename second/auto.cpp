@@ -1,9 +1,8 @@
-#include <iostream>
-#include <tuple>
+#include "precompiled.h"
 #include "auto.h"
 
 Auto::Auto()
-    : m_mileage(0), m_hours(0), m_fuel(0), m_brand("Audi!")
+    : m_brand("Audi!"), m_mileage(0),  m_hours(0), m_fuel(0)
 {
     std::cout << "Auto::Auto()" << std::endl;
 }

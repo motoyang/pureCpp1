@@ -1,6 +1,4 @@
-#include <iostream>
-#include <lua.hpp>
-#include "purecpp1.h"
+#include "precompiled.h"
 #include "luapp.h"
 
 LuaPP::LuaPP()

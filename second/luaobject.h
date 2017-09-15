@@ -1,9 +1,6 @@
 #ifndef LUAOBJECT_H
 #define LUAOBJECT_H
 
-//#include <functional>
-//#include "purecpp1.h"
-
 #ifndef LUA_OBJECT_REGISTER
 #define LUA_OBJECT_REGISTER(ls, tn, mt, ft)         \
     luaL_newmetatable((ls), (tn));                  \
@@ -73,9 +70,6 @@ struct LuaObject
 
         auto fn = std::bind(f, *s, std::forward<Cn>(args)...);
         return fn();
-
-        // 不需要返回lua任何变量
-//        return 0;
     }
 
     template<typename T, typename CM>
@@ -134,25 +128,6 @@ struct LuaObject
     LUA_OBJECT_REGISTER(ls, sm_mateTable, lib_m, lib_f);        \
     return 1;                                                   \
 }
-
-struct LuaStudent : public LuaObject<LuaStudent>
-{
-    static const char* sm_mateTable;
-    static int openlib(lua_State *L);
-
-    static int l_setName(lua_State * L);
-    static int l_setAge(lua_State* L);
-    static int l_setNA(lua_State* L);
-    static int l_getName(lua_State* L);
-    static int l_getAge(lua_State* L);
-    static int l_print(lua_State* L);
-    static int student2string(lua_State* L);
-
-    static int l_set3Value(lua_State* ls);
-    static int l_set4Value(lua_State* ls);
-    static int l_get4Value(lua_State* ls);
-    static int l_print4(lua_State* ls);
-};
 
 void lua_test7();
 void lua_test8();

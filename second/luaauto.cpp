@@ -1,8 +1,4 @@
-#include <iostream>
-#include <lua.hpp>
-#include "purecpp1.h"
-#include "luapp.h"
-#include "luaobject.h"
+#include "precompiled.h"
 #include "auto.h"
 #include "luaauto.h"
 

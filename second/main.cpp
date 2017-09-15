@@ -1,8 +1,4 @@
-#include <iostream>
-#include <sstream>
-#include <lua.hpp>
-#include "purecpp1.h"
-#include "luaobject.h"
+#include "precompiled.h"
 #include "luaauto.h"
 
 using namespace std;
