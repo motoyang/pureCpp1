@@ -1,4 +1,6 @@
 #include "precompiled.h"
+#include "luapp.h"
+#include "luaobject.h"
 #include "auto.h"
 #include "luaauto.h"
 
@@ -77,4 +79,45 @@ void lua_Auto_test1()
     LuaPP luapp;
     luapp.requireLibs(lualibs);
     luapp.doFile("auto1.lua");
+}
+
+void luapp_test1()
+{
+    START_FUNC();
+
+    static const luaL_Reg lualibs[] =
+    {
+        {"base", luaopen_base},
+        {"io", luaopen_io},
+        {"auto", luaAuto::openlib},
+        {NULL, NULL}
+    };
+
+    LuaPP luapp;
+    luapp.requireLibs(lualibs);
+    luapp.doFile("auto2.lua");
+
+    luapp.push(2, 3.3);
+    luapp.push(std::string("aaa"));
+
+    std::string b("bbb");
+    luapp.push(b);
+
+    luapp.dumpStack();
+
+    std::string s1, s2;
+    int i1 = 1111;
+    double d = 2222;
+    luapp.pop(s1, s2, d, i1);
+    std::cout << s1 <<", " << s2 << ", " << d << ", " << i1 << std::endl;
+
+    luapp.doFunction("f", 1, 2, 3.0);
+    luapp.dumpStack();
+    luapp.pop(d);
+    std::cout << "restule =" << d << std::endl;
+    luapp.dumpStack();
+
+    luapp.getGlobal("width", d);
+    std::cout << "width = " << d << std::endl;
+    luapp.dumpStack();
 }

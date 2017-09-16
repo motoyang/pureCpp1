@@ -10,33 +10,6 @@
     luaL_newlib((ls), (ft));
 #endif
 
-#ifndef GET_SET_VALUE_FORM_LUA
-#define GET_SET_VALUE_FORM_LUA
-auto f_getBoolean   = [](lua_State * L, int idx) { return lua_toboolean(L, idx); };
-auto f_getInteger   = [](lua_State * L, int idx) { return lua_tointeger(L, idx); };
-auto f_getLong      = [](lua_State * L, int idx) { return (long)lua_tointeger(L, idx); };
-auto f_getNumber    = [](lua_State * L, int idx) { return lua_tonumber(L, idx); };
-auto f_getString    = [](lua_State * L, int idx) { return std::string(lua_tostring(L, idx)); };
-//auto f_getObjlen    = [](lua_State * L, int idx) { return lua_toobjlen(L, idx); };
-//auto f_getBuffer    = [](lua_State * L, int idx, size_t *len) { return lua_tolstring(L, idx, len); };
-//auto f_getCFunction = [](lua_State * L, int idx) { return lua_tocfunction(L, idx); };
-//auto f_getPointer   = [](lua_State * L, int idx) { return lua_topointer(L, idx); };
-//auto f_getThread    = [](lua_State * L, int idx) { return lua_tothread(L, idx); };
-//auto f_getUserData  = [](lua_State * L, int idx) { return lua_touserdata(L, idx); };
-
-//auto f_setUserData  = [](lua_State * L, std::result_of<decltype(lua_touserdata)> v) { return lua_pushuserdata(L, v); };
-auto f_setNull      = [](lua_State * L) { return lua_pushnil(L); };
-auto f_setBoolean   = [](lua_State * L, bool v) { return lua_pushboolean(L, (int)v); };
-auto f_setLong      = [](lua_State * L, long v) { return lua_pushinteger(L, v); };
-auto f_setFloat     = [](lua_State * L, float v) { return lua_pushnumber(L, (lua_Number)v); };
-auto f_setDouble    = [](lua_State * L, double v) { return lua_pushnumber(L, (lua_Number)v); };
-auto f_setInteger   = [](lua_State * L, int v) { return lua_pushinteger(L, v); };
-auto f_setString    = [](lua_State * L, const std::string& v) { return lua_pushstring(L, v.c_str()); };
-auto f_setBuffer    = [](lua_State * L, const std::string& v, size_t len) { return lua_pushlstring(L, v.c_str(), len); };
-
-
-#endif
-
 template<typename U>
 struct LuaObject
 {

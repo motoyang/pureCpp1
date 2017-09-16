@@ -89,12 +89,12 @@ int check_type_test(void)
     return 0;
 }
 
-
 template<typename F>
 void check_type_test3(F f)
 {
     std::cout << check_type<decltype(std::forward<F>(f))>() << std::endl;
 }
+
 
 void fun(int, int) {}
 
@@ -107,3 +107,95 @@ int check_type_test2()
     return 0;
 }
 
+/*
+template<typename T>
+void foo(T t)
+{
+    START_FUNC();
+    SHOW_NAME_AND_RESULT(t);
+    SHOW_NAME_AND_RESULT(check_type<decltype(t)>());
+}
+*/
+
+template<typename T>
+void foo(T& t)
+{
+    START_FUNC();
+    SHOW_NAME_AND_RESULT(t);
+    SHOW_NAME_AND_RESULT(check_type<decltype(t)>());
+}
+
+template<typename T>
+void foo(const T& t)
+{
+    START_FUNC();
+    SHOW_NAME_AND_RESULT(t);
+    SHOW_NAME_AND_RESULT(check_type<decltype(t)>());
+}
+
+template<> void foo(const int& i)
+{
+    START_FUNC();
+//    i = 999;
+}
+
+template<> void foo(int& i)
+{
+    START_FUNC();
+    i = 999;
+}
+/*
+template<> void foo(int i)
+{
+    START_FUNC();
+    i = 999;
+}
+*/
+/*
+template<> void foo(int* i)
+{
+    START_FUNC();
+    *i = 999;
+}
+*/
+/*
+template<> void foo(const int* i)
+{
+    START_FUNC();
+//    *i = 999;
+}
+*/
+//template<> void foo(std::string i)
+//{
+//    START_FUNC();
+////    *i = 999;
+//}
+
+template<> void foo(std::string& i)
+{
+    START_FUNC();
+//    *i = 999;
+}
+
+template<> void foo(const std::string& i)
+{
+    START_FUNC();
+//    *i = 999;
+}
+
+void check_type_test4()
+{
+    START_FUNC();
+
+    foo(7);
+    int i = 3;
+    foo(i);
+
+//    foo(std::string("aaaa"));
+    std::string s("bbb");
+    foo(s);
+    foo(std::string("ccc"));
+    foo("ddd");
+    const char * cc = "eee";
+    foo(cc);
+}

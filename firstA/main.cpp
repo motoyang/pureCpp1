@@ -69,5 +69,7 @@ int main(int argc, char *argv[])
 
     expand(1,2.3,3.5,"4aafa");
 
+    check_type_test4();
+
     return 0;
 }

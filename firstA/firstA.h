@@ -44,6 +44,7 @@ inline size_t get(Sig) {
 // 在check_type.cpp中实现
 int check_type_test(void);
 int check_type_test2();
+void check_type_test4();
 
 // 在has_member_test.cpp中实现
 int has_member_test1();

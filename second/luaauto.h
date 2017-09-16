@@ -9,5 +9,6 @@ DECLARE_LUA_OBJECT_BEGIN(luaAuto)
 DECLARE_LUA_OBJECT_END
 
 void lua_Auto_test1();
+void luapp_test1();
 
 #endif // LUA_AUTO_H
