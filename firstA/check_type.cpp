@@ -124,7 +124,7 @@ void foo(T& t)
     SHOW_NAME_AND_RESULT(t);
     SHOW_NAME_AND_RESULT(check_type<decltype(t)>());
 }
-
+/*
 template<typename T>
 void foo(const T& t)
 {
@@ -132,7 +132,7 @@ void foo(const T& t)
     SHOW_NAME_AND_RESULT(t);
     SHOW_NAME_AND_RESULT(check_type<decltype(t)>());
 }
-
+*/
 template<> void foo(const int& i)
 {
     START_FUNC();
@@ -144,6 +144,7 @@ template<> void foo(int& i)
     START_FUNC();
     i = 999;
 }
+
 /*
 template<> void foo(int i)
 {
@@ -165,36 +166,37 @@ template<> void foo(const int* i)
 //    *i = 999;
 }
 */
-//template<> void foo(std::string i)
-//{
-//    START_FUNC();
-////    *i = 999;
-//}
-
+/*
+template<> void foo(std::string i)
+{
+    START_FUNC();
+}
+*/
 template<> void foo(std::string& i)
 {
     START_FUNC();
 //    *i = 999;
 }
 
+/*
 template<> void foo(const std::string& i)
 {
     START_FUNC();
 //    *i = 999;
 }
-
+*/
 void check_type_test4()
 {
     START_FUNC();
 
-    foo(7);
+//    foo(7);
     int i = 3;
     foo(i);
 
 //    foo(std::string("aaaa"));
     std::string s("bbb");
     foo(s);
-    foo(std::string("ccc"));
+//    foo(std::string("ccc"));
     foo("ddd");
     const char * cc = "eee";
     foo(cc);

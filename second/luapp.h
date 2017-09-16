@@ -33,16 +33,16 @@ auto f_setBuffer    = [](lua_State * L, const std::string& v, size_t len) { retu
 // ---
 
 template<typename T>
-void f_push(lua_State * ls, T t);
+void f_push(lua_State * ls, const T& t);
 
 template<>
-void f_push(lua_State * ls, int i);
+void f_push(lua_State * ls, const int& i);
 
 template<>
-void f_push(lua_State *ls, std::string s);
+void f_push(lua_State *ls, const std::string& s);
 
 template<>
-void f_push(lua_State *ls, double d);
+void f_push(lua_State *ls, const double& d);
 
 // ---
 

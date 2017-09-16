@@ -3,9 +3,9 @@
 #include "luapp.h"
 
 // ---
-
+/*
 template<typename T>
-void f_push(lua_State * ls, T t)
+void f_push(lua_State * ls, const T& t)
 {
     UNUSED(ls);
     UNUSED(t);
@@ -13,21 +13,21 @@ void f_push(lua_State * ls, T t)
                 is_decay_same<T, double>::value ||
                 is_decay_same<T, std::string>::value,
                 "error type!");}
-
+*/
 template<>
-void f_push(lua_State * ls, int i)
+void f_push(lua_State * ls, const int& i)
 {f_setInteger(ls, i);}
 
 template<>
-void f_push(lua_State *ls, std::string s)
+void f_push(lua_State *ls, const std::string& s)
 {f_setString(ls, s);}
 
 template<>
-void f_push(lua_State *ls, double d)
+void f_push(lua_State *ls, const double& d)
 {f_setNumber(ls, d);}
 
 //---
-
+/*
 template<typename T >
 void f_pop(lua_State * ls, T& t)
 {
@@ -37,7 +37,7 @@ void f_pop(lua_State * ls, T& t)
                 is_decay_same<T, double>::value ||
                 is_decay_same<T, std::string>::value,
                 "error type!");}
-
+*/
 template<>
 void f_pop(lua_State * ls, int& i)
 {i = f_getInteger(ls, -1); lua_pop(ls, 1);}
