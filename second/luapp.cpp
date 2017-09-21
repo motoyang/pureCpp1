@@ -143,3 +143,97 @@ void l_output(lua_State * ls, int idx)
         ;
     }
 };
+
+// ---
+
+LuaStack::LuaStack(lua_State *ls)
+    : m_ls(ls)
+{
+
+}
+
+LuaStack::~LuaStack()
+{
+
+}
+
+void LuaStack::xmove(LuaStack *to, int n)
+{
+    lua_xmove(m_ls, to->m_ls, n);
+}
+
+// ---
+
+LuaThread::LuaThread(lua_State *ls)
+    : LuaStack(ls)
+{
+
+}
+
+LuaThread::~LuaThread()
+{
+
+}
+
+int LuaThread::yieldk(int nresults, lua_KContext ctx, lua_KFunction k)
+{
+    return lua_yieldk(m_ls, nresults, ctx, k);
+}
+
+int LuaThread::status() const
+{
+    return lua_status(m_ls);
+}
+
+int LuaThread::isYieldable() const
+{
+    return lua_isyieldable(m_ls);
+}
+
+// ---
+
+LuaState::LuaState(lua_State *ls, LUA_STATE_RESOUECE_TYPE resourceType)
+    : LuaThread(ls), m_lsResource(resourceType)
+{
+
+}
+
+LuaState::~LuaState()
+{
+    if (m_lsResource == LuaState::LUA_STATE_RESOUECE_TYPE::UNIQUE_LUA_STATE) {
+        lua_close(m_ls);
+        m_ls = nullptr;
+        m_lsResource = LuaState::LUA_STATE_RESOUECE_TYPE::NONE_STATE;
+    }
+}
+
+LuaThread *LuaState::newThread()
+{
+    lua_State* ls = lua_newthread(m_ls);
+    if (!ls) {
+        return nullptr;
+    }
+
+    return new LuaThread(ls);
+}
+
+LuaState *LuaState::create(lua_Alloc f, void *ud)
+{
+    lua_State * ls = lua_newstate(f, ud);
+    if (!ls) {
+        return nullptr;
+    }
+
+    return new LuaState(ls, LuaState::LUA_STATE_RESOUECE_TYPE::UNIQUE_LUA_STATE);
+}
+
+template<typename... Args>
+int LuaThread::resume(LuaThread *from, const std::string &func, Args... args)
+{
+    // lua的函数名入栈
+    lua_getglobal(from->m_ls, func.c_str());
+    // lua函数的参数入栈
+    int countOfArgs = from->push(std::forward<Args>(args)...);
+    // 执行lua函数
+    return lua_resume(m_ls, from->m_ls, countOfArgs);
+}

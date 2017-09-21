@@ -85,6 +85,84 @@ void l_output(lua_State * ls, int idx);
 
 // ---
 
+class LuaStack
+{
+protected:
+    lua_State * m_ls;
+
+public:
+    LuaStack(lua_State * ls);
+    ~LuaStack();
+
+    // 不能赋值，也不能拷贝构造
+    LuaStack(const LuaStack& ls) = delete;
+    LuaStack(LuaStack&& ls) = delete;
+    LuaStack operator=(const LuaStack& ls) = delete;
+    LuaStack operator=(LuaStack&& ls) = delete;
+
+    void xmove(LuaStack* to, int n);
+
+    // 多个参数入栈
+    template <typename... Args> int push(Args&&... args)
+    {
+        int countOfArgs = expandArgs(m_ls,
+                [](lua_State *ls, auto t){f_push(ls, t);},
+                std::forward<Args>(args)...);
+
+        return countOfArgs;
+    }
+
+    // 多个参数出栈
+    template <typename... Args> int pop(Args&&... args)
+    {
+        int countOfArgs = popArgs(m_ls,
+                std::forward<Args>(args)...);
+
+        return countOfArgs;
+    }
+};
+
+// ---
+
+class LuaThread : public LuaStack
+{
+public:
+    LuaThread(lua_State * ls);
+    ~LuaThread();
+
+    int yieldk(int nresults, lua_KContext ctx, lua_KFunction k);
+    int yield(int nresults) {
+        return yieldk(nresults, 0, NULL);
+    }
+
+    template<typename... Args>
+    int resume(LuaThread* from, const std::string& func, Args... args);
+    int status() const;
+    int isYieldable() const;
+};
+
+class LuaState : public LuaThread
+{
+protected:
+    enum class LUA_STATE_RESOUECE_TYPE {
+        NONE_STATE,
+        UNIQUE_LUA_STATE,
+        SHARED_LUA_STATE
+    };
+
+    LUA_STATE_RESOUECE_TYPE m_lsResource;
+
+public:
+    LuaState(lua_State * ls, LUA_STATE_RESOUECE_TYPE resourceType = LUA_STATE_RESOUECE_TYPE::SHARED_LUA_STATE);
+    ~LuaState();
+
+    LuaThread* newThread();
+
+    static LuaState* create(lua_Alloc f = nullptr, void *ud = nullptr);
+};
+
+// ---
+
 class LuaPP
 {
     lua_State *m_ls;

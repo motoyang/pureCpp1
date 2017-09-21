@@ -45,6 +45,37 @@ void tuple_test()
     }
 }
 
+struct A1 {
+    A1() {
+        std::cout << "A1::A1()" << std::endl;
+    }
+    ~A1() {
+        std::cout << "A1::~A1()" << std::endl;
+    }
+};
+
+struct B1 {
+    B1() {
+        std::cout << "B1::B1()" << std::endl;
+    }
+    ~B1() {
+        std::cout << "B1::~B1()" << std::endl;
+    }
+
+    void print() {
+        std::cout << "B1::print" << std::endl;
+    }
+
+    A1 a;
+};
+
+void test_obj1()
+{
+    START_FUNC();
+
+    B1 b;
+    b.print();
+}
 
 int main(int argc, char *argv[])
 {
@@ -70,6 +101,8 @@ int main(int argc, char *argv[])
     expand(1,2.3,3.5,"4aafa");
 
     check_type_test4();
+
+    test_obj1();
 
     return 0;
 }
