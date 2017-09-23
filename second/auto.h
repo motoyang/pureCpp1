@@ -19,4 +19,14 @@ public:
     std::tuple<std::string, int, float, int> check() const;
 };
 
+class Car: public Auto
+{
+public:
+    Car();
+    virtual ~Car();
+
+    double music(const std::string& song);
+    bool navi(const std::string& address);
+};
+
 #endif // AUTO_H

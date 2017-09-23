@@ -41,3 +41,26 @@ std::tuple<std::string, int, float, int> Auto::check() const
 //    std::cout << m_brand <<", " << m_mileage << ", " << m_hours << ", " << m_fuel << std::endl;
     return std::make_tuple(m_brand, m_mileage, m_hours, m_fuel);
 }
+
+Car::Car()
+    : Auto()
+{
+    std::cout << "Car::Car()" << std::endl;
+}
+
+Car::~Car()
+{
+    std::cout << "Car::~Car()" << std::endl;
+}
+
+double Car::music(const std::string &song)
+{
+    std::cout << "music: song ... " << song << std::endl;
+    return song.length() * 1.234;
+}
+
+bool Car::navi(const std::string &address)
+{
+    std::cout << "navi: address is " << address << std::endl;
+    return (address.length() % 2) == 1;
+}
