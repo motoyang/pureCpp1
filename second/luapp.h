@@ -9,14 +9,8 @@
 #define DECLARE_LUA_OBJECT_BEGIN(o)                                 \
     struct o {
 
-#define DECLARE_LUA_OBJECT_FROM_FATHER1_BEGIN(o, f)                 \
+#define DECLARE_LUA_OBJECT_FROM_FATHER_BEGIN(o, f)                 \
     struct o: public f {
-
-#define DECLARE_LUA_OBJECT_FROM_FATHER2_BEGIN(o, f1, f2)            \
-    struct o: public f1, public f2 {
-
-#define DECLARE_LUA_OBJECT_FROM_FATHER3_BEGIN(o, f1, f2, f3)        \
-    struct o: public f1, public f2, public f3 {
 
 #define EXPORT_METHOD_TO_LUA(n)                                 \
     static int n(lua_State *ls);
@@ -64,8 +58,8 @@
     l.setField(-2, "__index");                         \
     l.setFuncs(lib_m, 0);
 
-#define INHERIT_METHOD_FROM_FATHER(f)                     \
-    l.getField(LUA_REGISTRYINDEX, f::mt_##f);             \
+#define INHERIT_METHOD_FROM_FATHER(f)                       \
+    l.getMetatable(f::mt_##f);                              \
     l.tableAppend(l.absIndex(-2), l.absIndex(-1), false);   \
     l.pop(1);
 
