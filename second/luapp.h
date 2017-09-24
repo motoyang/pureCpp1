@@ -6,127 +6,74 @@
 #ifndef DECLARE_AND_IMPLEMENT_LUA_OBJECT
 #define DECLARE_AND_IMPLEMENT_LUA_OBJECT
 
-#define DECLARE2_LUA_OBJECT_BEGIN(o)                                \
-    struct o{                                                      \
-        template<typename T> static int new_##o(lua_State * L) {    \
-            return Luapp(L).newObject<T>(mt_##o); }                 \
-        template<typename T> static int delete_##o(lua_State *L) {  \
-            return Luapp(L).deleteObject<T>(mt_##o); }              \
-        static const char * mt_##o;                                 \
-        static int open_##o(lua_State * L);
+#define DECLARE_LUA_OBJECT_BEGIN(o)                                 \
+    struct o {
 
-#define DECLARE2_LUA_OBJECT_BEGIN2(o, f)                                \
-    struct o: public f{                                                      \
-        template<typename T> static int new_##o(lua_State * L) {    \
-            return Luapp(L).newObject<T>(mt_##o); }                 \
-        template<typename T> static int delete_##o(lua_State *L) {  \
-            return Luapp(L).deleteObject<T>(mt_##o); }              \
-        static const char * mt_##o;                                 \
-        static int open_##o(lua_State * L);
+#define DECLARE_LUA_OBJECT_FROM_FATHER1_BEGIN(o, f)                 \
+    struct o: public f {
 
-#define EXPORT2_METHOD_TO_LUA(n)                             \
+#define DECLARE_LUA_OBJECT_FROM_FATHER2_BEGIN(o, f1, f2)            \
+    struct o: public f1, public f2 {
+
+#define DECLARE_LUA_OBJECT_FROM_FATHER3_BEGIN(o, f1, f2, f3)        \
+    struct o: public f1, public f2, public f3 {
+
+#define EXPORT_METHOD_TO_LUA(n)                                 \
     static int n(lua_State *ls);
 
-#define DECLARE2_LUA_OBJECT_END                              \
+#define DECLARE_LUA_OBJECT_END(o)                               \
+    template<typename T> static int new_##o(lua_State * L) {    \
+        return Luapp(L).newObject<T>(mt_##o); }                 \
+    template<typename T> static int delete_##o(lua_State *L) {  \
+        return Luapp(L).deleteObject<T>(mt_##o); }              \
+    static const char * mt_##o;                                 \
+    static int open_##o(lua_State * L);                         \
     };
-
 
 // used in .cpp file.
-#define DEFINE2_META_TABLE_NAME(o, n)                \
+#define DEFINE_META_TABLE_NAME(o, n)                \
     const char* o::mt_##o = (n);
 
-#define IMPLEMENT2_OPENLIB_METHOD_BEGIN(o)           \
-    int o::open_##o(lua_State *ls)                   \
+#define IMPLEMENT_OPENLIB_METHOD_BEGIN(o)           \
+    int o::open_##o(lua_State *ls)                  \
     {
 
-#define LIST2_META_TABLE_BEGIN(lo, co)               \
-        static const struct luaL_Reg lib_m [] = {    \
+#define LIST_META_TABLE_BEGIN(lo, co)               \
+        static const struct luaL_Reg lib_m [] = {   \
         {"__gc",        lo::delete_##lo<co>},
 
-#define ITEM2_IN_TABLE(luaMethod, cppMethod)         \
+#define ITEM_IN_TABLE(luaMethod, cppMethod)         \
     {(luaMethod), (cppMethod) },
 
-#define LIST2_META_TABLE_END                         \
-    {NULL,          NULL}                            \
+#define LIST_META_TABLE_END                         \
+    {NULL,          NULL}                           \
     };
 
-#define LIST2_FUNC_TABLE_BEGIN(lo, co)               \
-        static const struct luaL_Reg lib_f [] = {    \
+#define LIST_FUNC_TABLE_BEGIN(lo, co)               \
+        static const struct luaL_Reg lib_f [] = {   \
         {"create",      lo::new_##lo<co>},
 
-#define LIST2_FUNC_TABLE_END                         \
-    {NULL,          NULL}                            \
+#define LIST_FUNC_TABLE_END                         \
+    {NULL,          NULL}                           \
     };
 
-#define LUA2_OBJECT_REGISTER(ls, tn, mt, ft)         \
-    luaL_newmetatable((ls), (tn));                   \
-    lua_pushvalue((ls), -1);                         \
-    lua_setfield((ls), -2, "__index");               \
-    luaL_setfuncs((ls), (mt), 0);                    \
-    luaL_newlib((ls), (ft));
-
-#define IMPLEMENT2_OPENLIB_METHOD_END(o)             \
-    Luapp l(ls);                                     \
+#define REGISTER_LUA_OBJECT_METHODS(o)                 \
+    Luapp l(ls);                                       \
     l.newMetatable(mt_##o);                            \
     l.pushValue(-1);                                   \
     l.setField(-2, "__index");                         \
-    l.setFuncs(lib_m, 0);                              \
+    l.setFuncs(lib_m, 0);
+
+#define INHERIT_METHOD_FROM_FATHER(f)                     \
+    l.getField(LUA_REGISTRYINDEX, f::mt_##f);             \
+    l.tableAppend(l.absIndex(-2), l.absIndex(-1), false);   \
+    l.pop(1);
+
+#define IMPLEMENT_OPENLIB_METHOD_END                 \
     luaL_newlib(ls, lib_f);                          \
     return 1;                                        \
 }
 
-//l.objectRegister(mt_##o, nullptr, lib_m, lib_f);
-//    return 1;
-
-#define IMPLEMENT2_OPENLIB_METHOD_END2(o, f)         \
-    Luapp l(ls);                                     \
-    l.newMetatable(mt_##o);                            \
-    l.pushValue(-1);                                   \
-    l.setField(-2, "__index");                         \
-    l.setFuncs(lib_m, 0);                              \
-    l.getField(LUA_REGISTRYINDEX, f::mt_##f);          \
-    l.tableAdd(l.absIndex(-2), l.absIndex(-1), false);                     \
-    luaL_newlib(ls, lib_f);                          \
-    return 1;                                        \
-}
-
-//}                                                \
-//if (f::mt_##f) {                                 \
-//    l.pushString(f::mt_##f);                          \
-//    l.getTable(LUA_REGISTRYINDEX);                 \
-//    l.objectRegister(mt_##o, f::mt_##f, lib_m, lib_f);
-//    LUA2_OBJECT_REGISTER(ls, mt_##o, lib_m, lib_f);
-
-#endif
-
-// ---
-
-#ifndef GET_SET_VALUE_FORM_LUA
-#define GET_SET_VALUE_FORM_LUA
-//auto f_getNil       = [](lua_State * L, int idx) { return lua_toboolean(L, idx); };
-auto f_getBoolean   = [](lua_State * L, int idx) { return lua_toboolean(L, idx); };
-auto f_getInteger   = [](lua_State * L, int idx) { return lua_tointeger(L, idx); };
-auto f_getLong      = [](lua_State * L, int idx) { return (long)lua_tointeger(L, idx); };
-auto f_getNumber    = [](lua_State * L, int idx) { return lua_tonumber(L, idx); };
-auto f_getString    = [](lua_State * L, int idx) { return std::string(lua_tostring(L, idx)); };
-auto f_getCFunction = [](lua_State * L, int idx) { return lua_tocfunction(L, idx); };
-auto f_getUserdata  = [](lua_State * L, int idx) { return lua_touserdata(L, idx); };
-auto f_getTable     = [](lua_State * L, int idx) { return lua_topointer(L, idx); };
-//auto f_getObjlen    = [](lua_State * L, int idx) { return lua_toobjlen(L, idx); };
-//auto f_getBuffer    = [](lua_State * L, int idx, size_t *len) { return lua_tolstring(L, idx, len); };
-//auto f_getPointer   = [](lua_State * L, int idx) { return lua_topointer(L, idx); };
-//auto f_getThread    = [](lua_State * L, int idx) { return lua_tothread(L, idx); };
-
-//auto f_setUserData  = [](lua_State * L, std::result_of<decltype(lua_touserdata)> v) { return lua_pushuserdata(L, v); };
-auto f_setNull      = [](lua_State * L) { return lua_pushnil(L); };
-auto f_setBoolean   = [](lua_State * L, bool v) { return lua_pushboolean(L, (int)v); };
-auto f_setLong      = [](lua_State * L, long v) { return lua_pushinteger(L, v); };
-auto f_setFloat     = [](lua_State * L, float v) { return lua_pushnumber(L, (lua_Number)v); };
-auto f_setDouble    = [](lua_State * L, double v) { return lua_pushnumber(L, (lua_Number)v); };
-auto f_setNumber    = [](lua_State * L, double v) { return lua_pushnumber(L, (lua_Number)v); };
-auto f_setInteger   = [](lua_State * L, int v) { return lua_pushinteger(L, v); };
-auto f_setString    = [](lua_State * L, const std::string& v) { return lua_pushstring(L, v.c_str()); };
-auto f_setBuffer    = [](lua_State * L, const std::string& v, size_t len) { return lua_pushlstring(L, v.c_str(), len); };
 #endif
 
 // ---
@@ -188,9 +135,11 @@ int countOfArgs(Args&&... args)
 }
 
 // ---
+// stackindex的默认输入函数
+void stackindex_stdcout(lua_State * ls, int idx);
 
-void stdcpp_output(lua_State * ls, int idx);
-
+// table的默认输出函数，栈顶就是key和value
+void keyvalue_stdcout(lua_State * ls);
 // ---
 
 class LuaStack
@@ -276,7 +225,10 @@ public:
         return countOfArgs;
     }
 
-    void dumpStack(std::function<void(lua_State*, int)> f = stdcpp_output);
+    std::string typeNameFromIndex(int idx);
+    std::string valueToString(int idx);
+
+    void dumpStack(std::function<void(lua_State*, int)> f = stackindex_stdcout);
 };
 
 // ---
@@ -389,9 +341,6 @@ public:
     int newMetatable(const char *tname);
     void setFuncs(const luaL_Reg *l, int nup);
 
-
-//#define newLib(l)       luaL_newlib(m_ls, )
-//    void newLibtable(const luaL_Reg l[]);
 };
 
 //---
@@ -405,9 +354,12 @@ public:
     static std::shared_ptr<Luapp> create(lua_Alloc f, void *ud);
     static std::shared_ptr<Luapp> create();
 
-//    void objectRegister(const char* tname, const char* ftname, const luaL_Reg lib_m[], const luaL_Reg lib_f[]);
-    int tableAdd(int idxTo, int idxFrom, bool replaceable);
-    int tablePrint(int index);
+    int tableAppend(int idxTo, int idxFrom, bool replaceable);
+    int tableForeach(int index, std::function<void(lua_State*)> f);
+    void tableStdcout(int index);
+
+    bool requireLibs(const luaL_Reg *libs);
+    bool doFile(const std::string& fname);
 
     template<typename T> int newObject(const char * mtname)
     {
@@ -429,47 +381,31 @@ public:
         return 0;
     }
 
+    // 把从lua来的调用，转发到相应到c++方法，并返回执行结果
+    // 注意：输入参数和返回值到处理，是调用者到责任，调用者对此也很清楚
     template<typename T, typename CM, typename... Cn>
-    auto put(const char *tname, CM f, Cn... args)
+    auto dispatchToC(CM f, Cn... args)
     {
-//        T **s = (T**)checkUData(1, tname);
-          T **s = (T**)toUserdata(1);
+        // 为了能够被子类调用，此处不能使用checkUData
+        // such as: T **s = (T**)checkUData(1, tname);
+        T **s = (T**)toUserdata(1);
         argCheck(s != nullptr, 1, "invalid user data");
 
         auto fn = std::bind(f, *s, std::forward<Cn>(args)...);
         return fn();
     }
 
-    template<typename T, typename CM>
-    auto get(const char * tname, CM f)
+    template <typename... Args>
+    int dispatchToLua(const std::string& name, int countOfResult, Args... args)
     {
-//        T **s = (T**)checkUData(1, tname);
-        T **s = (T**)toUserdata(1);
-        argCheck(s != nullptr, 1, "invalid user data");
-
-        auto fn = std::bind(f, *s);
-        return fn();
+        // lua的函数名入栈
+        getGlobal(name.c_str());
+        // lua函数的参数入栈
+        int countOfArgs = pushN(std::forward<Args>(args)...);
+        // 执行lua函数
+        return pcall(countOfArgs, countOfResult, 0);
     }
 
-    bool requireLibs(const luaL_Reg *libs);
-    bool doFile(const std::string& fname);
-};
-
-// ---
-
-class LuaTable: public LuaLState
-{
-    friend class Luapp;
-
-//    lua_State * m_ls;
-
-protected:
-    LuaTable(lua_State * ls);
-
-public:
-    virtual ~LuaTable();
-
-    void forEach(int index);
 };
 
 // ---
@@ -483,7 +419,7 @@ public:
 
     bool requireLibs(const luaL_Reg *libs);
     bool doFile(const std::string& fname);
-    void dumpStack(std::function<void(lua_State*, int)> f = stdcpp_output);
+    void dumpStack(std::function<void(lua_State*, int)> f = stackindex_stdcout);
 
     template <typename... Args> int push(Args&&... args)
     {

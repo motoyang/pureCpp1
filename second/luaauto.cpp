@@ -6,25 +6,165 @@
 
 // ---
 
-DEFINE2_META_TABLE_NAME(luaCar, "xt.Car")
 
-IMPLEMENT2_OPENLIB_METHOD_BEGIN(luaCar)
-    LIST2_META_TABLE_BEGIN(luaCar, Car)
-        ITEM2_IN_TABLE("music",         luaCar::lc_music)
-        ITEM2_IN_TABLE("navi",          luaCar::lc_navi)
-    LIST2_META_TABLE_END
+DEFINE_META_TABLE_NAME(luaSuperCar, "F9872759-8308-4DDA-A5C2-740F6E285911")
 
-    LIST2_FUNC_TABLE_BEGIN(luaCar, Car)
-    LIST2_FUNC_TABLE_END
-//IMPLEMENT2_OPENLIB_METHOD_END(luaCar)
-IMPLEMENT2_OPENLIB_METHOD_END2(luaCar, lua3Auto)
+IMPLEMENT_OPENLIB_METHOD_BEGIN(luaSuperCar)
+    LIST_META_TABLE_BEGIN(luaSuperCar, SuperCar)
+        ITEM_IN_TABLE("stealth",            luaSuperCar::l_stealth)
+        ITEM_IN_TABLE("dive",               luaSuperCar::l_dive)
+    LIST_META_TABLE_END
 
+    LIST_FUNC_TABLE_BEGIN(luaSuperCar, SuperCar)
+    LIST_FUNC_TABLE_END
 
+    REGISTER_LUA_OBJECT_METHODS(luaSuperCar)
+    INHERIT_METHOD_FROM_FATHER(luaCar)
+    INHERIT_METHOD_FROM_FATHER(luaAirVehicle)
+    INHERIT_METHOD_FROM_FATHER(luaSeafaring)
+
+IMPLEMENT_OPENLIB_METHOD_END
+
+int luaSuperCar::l_stealth(lua_State * ls)
+{
+    Luapp l(ls);
+    l.dispatchToC<SuperCar>(&SuperCar::stealth);
+
+    return 0;
+}
+
+int luaSuperCar::l_dive(lua_State * ls)
+{
+    Luapp l(ls);
+    std::string r = l.dispatchToC<SuperCar>(&SuperCar::dive, l.toNumber(2), l.toInteger(3));
+    l.pop(2);
+    l.pushString(r.c_str());
+
+    return 1;
+}
+
+// ---
+
+DEFINE_META_TABLE_NAME(luaSeafaring, "A81F2DB0-2B23-4456-BC20-0D37C3D06035")
+
+IMPLEMENT_OPENLIB_METHOD_BEGIN(luaSeafaring)
+    LIST_META_TABLE_BEGIN(luaSeafaring, Seafaring)
+        ITEM_IN_TABLE("voyage",            luaSeafaring::l_voyage)
+        ITEM_IN_TABLE("dive",              luaSeafaring::l_dive)
+    LIST_META_TABLE_END
+
+    LIST_FUNC_TABLE_BEGIN(luaSeafaring, Seafaring)
+    LIST_FUNC_TABLE_END
+
+    REGISTER_LUA_OBJECT_METHODS(luaSeafaring)
+
+IMPLEMENT_OPENLIB_METHOD_END
+
+int luaSeafaring::l_voyage(lua_State * ls)
+{
+    Luapp l(ls);
+    int r = l.dispatchToC<Seafaring>(&Seafaring::voyage, l.toNumber(2));
+    l.pop(1);
+    l.pushInteger(r);
+
+    return 1;
+}
+
+int luaSeafaring::l_dive(lua_State * ls)
+{
+    Luapp l(ls);
+    std::string r = l.dispatchToC<Seafaring>(&Seafaring::dive, l.toNumber(2), l.toInteger(3));
+    l.pop(2);
+    l.pushString(r.c_str());
+
+    return 1;
+}
+
+// ---
+
+DEFINE_META_TABLE_NAME(luaAirVehicle, "BBCAA017-886E-4F11-AE4E-89A0C88A9418")
+
+IMPLEMENT_OPENLIB_METHOD_BEGIN(luaAirVehicle)
+    LIST_META_TABLE_BEGIN(luaAirVehicle, AirVehicle)
+        ITEM_IN_TABLE("fly",            luaAirVehicle::l_fly)
+    LIST_META_TABLE_END
+
+    LIST_FUNC_TABLE_BEGIN(luaAirVehicle, AirVehicle)
+    LIST_FUNC_TABLE_END
+
+    REGISTER_LUA_OBJECT_METHODS(luaAirVehicle)
+
+IMPLEMENT_OPENLIB_METHOD_END
+
+int luaAirVehicle::l_fly(lua_State * ls)
+{
+    Luapp l(ls);
+    int r = l.dispatchToC<AirVehicle>(&AirVehicle::fly, l.toNumber(2));
+    l.pop(1);
+    l.pushInteger(r);
+
+    return 1;
+}
+
+// ---
+
+DEFINE_META_TABLE_NAME(luaTesla, "F66A760E-3F7F-4F8B-8824-E16C07E02E7C")
+
+IMPLEMENT_OPENLIB_METHOD_BEGIN(luaTesla)
+    LIST_META_TABLE_BEGIN(luaTesla, Tesla)
+        ITEM_IN_TABLE("charge",         luaTesla::l_charge)
+        ITEM_IN_TABLE("bluetooth",      luaTesla::l_bluetooth)
+    LIST_META_TABLE_END
+
+    LIST_FUNC_TABLE_BEGIN(luaTesla, Tesla)
+    LIST_FUNC_TABLE_END
+
+    REGISTER_LUA_OBJECT_METHODS(luaTesla)
+    INHERIT_METHOD_FROM_FATHER(luaCar)
+
+IMPLEMENT_OPENLIB_METHOD_END
+
+int luaTesla::l_charge(lua_State * ls)
+{
+    Luapp l(ls);
+    int r = l.dispatchToC<Tesla>(&Tesla::charge, l.toNumber(2));
+    l.pop(1);
+    l.pushInteger(r);
+
+    return 1;
+}
+
+int luaTesla::l_bluetooth(lua_State * ls)
+{
+    Luapp l(ls);
+    l.dispatchToC<Tesla>(&Tesla::bluetooth, l.toString(2));
+    l.pop(1);
+
+    return 0;
+}
+
+// ---
+
+DEFINE_META_TABLE_NAME(luaCar, "77E5E7E8-367F-4A6A-ADE7-3C17A26A0C8D")
+
+IMPLEMENT_OPENLIB_METHOD_BEGIN(luaCar)
+    LIST_META_TABLE_BEGIN(luaCar, Car)
+        ITEM_IN_TABLE("music",         luaCar::lc_music)
+        ITEM_IN_TABLE("navi",          luaCar::lc_navi)
+    LIST_META_TABLE_END
+
+    LIST_FUNC_TABLE_BEGIN(luaCar, Car)
+    LIST_FUNC_TABLE_END
+
+    REGISTER_LUA_OBJECT_METHODS(luaCar)
+    INHERIT_METHOD_FROM_FATHER(lua3Auto)
+
+IMPLEMENT_OPENLIB_METHOD_END
 
 int luaCar::lc_music(lua_State * ls)
 {
     Luapp l(ls);
-    double r = l.put<Car>(mt_luaCar, &Car::music, l.toString(2));
+    double r = l.dispatchToC<Car>(&Car::music, l.toString(2));
     l.pop(1);
     l.pushNumber(r);
 
@@ -34,7 +174,7 @@ int luaCar::lc_music(lua_State * ls)
 int luaCar::lc_navi(lua_State * ls)
 {
     Luapp l(ls);
-    bool r = l.put<Car>(mt_luaCar, &Car::navi, l.toString(2));
+    bool r = l.dispatchToC<Car>(&Car::navi, l.toString(2));
     l.pop(1);
     l.pushBoolean(r);
 
@@ -43,24 +183,27 @@ int luaCar::lc_navi(lua_State * ls)
 
 // ---
 
-DEFINE2_META_TABLE_NAME(lua3Auto, "xt3.Auto")
+DEFINE_META_TABLE_NAME(lua3Auto, "E141BB75-DE03-4004-A700-936B68242766")
 
-IMPLEMENT2_OPENLIB_METHOD_BEGIN(lua3Auto)
-    LIST2_META_TABLE_BEGIN(lua3Auto, Auto)
-        ITEM2_IN_TABLE("drive",         lua3Auto::l3_drive)
-        ITEM2_IN_TABLE("fuel",          lua3Auto::l3_fuel)
-        ITEM2_IN_TABLE("maintain",      lua3Auto::l3_maintain)
-        ITEM2_IN_TABLE("check",         lua3Auto::l3_check)
-    LIST2_META_TABLE_END
+IMPLEMENT_OPENLIB_METHOD_BEGIN(lua3Auto)
+    LIST_META_TABLE_BEGIN(lua3Auto, Auto)
+        ITEM_IN_TABLE("drive",         lua3Auto::l3_drive)
+        ITEM_IN_TABLE("fuel",          lua3Auto::l3_fuel)
+        ITEM_IN_TABLE("maintain",      lua3Auto::l3_maintain)
+        ITEM_IN_TABLE("check",         lua3Auto::l3_check)
+    LIST_META_TABLE_END
 
-    LIST2_FUNC_TABLE_BEGIN(lua3Auto, Auto)
-    LIST2_FUNC_TABLE_END
-IMPLEMENT2_OPENLIB_METHOD_END(lua3Auto)
+    LIST_FUNC_TABLE_BEGIN(lua3Auto, Auto)
+    LIST_FUNC_TABLE_END
+
+    REGISTER_LUA_OBJECT_METHODS(lua3Auto)
+
+IMPLEMENT_OPENLIB_METHOD_END
 
 int lua3Auto::l3_drive(lua_State * ls)
 {
     Luapp l(ls);
-    l.put<Auto>(mt_lua3Auto, &Auto::drive, l.toString(2), l.toInteger(3), l.toNumber(4));
+    l.dispatchToC<Auto>(&Auto::drive, l.toString(2), l.toInteger(3), l.toNumber(4));
     l.pop(4);
 
     return 0;
@@ -69,25 +212,22 @@ int lua3Auto::l3_drive(lua_State * ls)
 int lua3Auto::l3_fuel(lua_State * ls)
 {
     Luapp l(ls);
-    l.put<Auto>(mt_lua3Auto, &Auto::fuel, l.toInteger(2));
+    l.dispatchToC<Auto>(&Auto::fuel, l.toInteger(2));
     l.pop(1);
 
     return 0;
 }
 
-
 int lua3Auto::l3_maintain(lua_State * ls)
 {
     Luapp l(ls);
-    auto p = l.put<Auto>(mt_lua3Auto, &Auto::maintain, l.toString(2));
+    auto p = l.dispatchToC<Auto>(&Auto::maintain, l.toString(2));
 
     // 将传入到参数出栈
     l.pop(1);
 
     // 返回到值如栈
     l.pushInteger(p);
-
-    l.dumpStack();
 
     return 1;
 }
@@ -95,184 +235,17 @@ int lua3Auto::l3_maintain(lua_State * ls)
 int lua3Auto::l3_check(lua_State * ls)
 {
     Luapp l(ls);
-    l.dumpStack();
-
-    auto p = l.get<Auto>(mt_lua3Auto, &Auto::check);
+    auto p = l.dispatchToC<Auto>(&Auto::check);
 
     l.pushString(std::get<0>(p).c_str());
     l.pushInteger(std::get<1>(p));
     l.pushNumber(std::get<2>(p));
     l.pushInteger(std::get<3>(p));
-
-    l.dumpStack();
-
-    return 4;
-}
-// ---
-
-const char * lua2Auto::sm_mtlua2Auto = "xt2.Auto";
-
-int lua2Auto::openlua2Auto(lua_State * L)
-{
-    static const struct luaL_Reg lib_m [] = {
-        {"drive",               lua2Auto::l2_drive},
-        {"fuel",                lua2Auto::l2_fuel},
-        {"maintain",            lua2Auto::l2_maintain},
-        {"check",               lua2Auto::l2_check},
-        {"__gc",                lua2Auto::deletelua2Auto<Auto>},
-        {NULL,                  NULL}
-    };
-
-    static const struct luaL_Reg lib_f [] = {
-        {"create",      lua2Auto::newlua2Auto<Auto>},
-        {NULL,          NULL}
-    };
-
-    LUA_OBJECT_REGISTER(L, sm_mtlua2Auto, lib_m, lib_f);
-
-    return 1;
-}
-
-int lua2Auto::l2_drive(lua_State * ls)
-{
-    Luapp l(ls);
-    l.put<Auto>(sm_mtlua2Auto, &Auto::drive, l.toString(2), l.toInteger(3), l.toNumber(4));
-    l.pop(4);
-
-    return 0;
-}
-
-int lua2Auto::l2_fuel(lua_State * ls)
-{
-    Luapp l(ls);
-    l.put<Auto>(sm_mtlua2Auto, &Auto::fuel, l.toInteger(2));
-    l.pop(1);
-
-    return 0;
-}
-
-
-int lua2Auto::l2_maintain(lua_State * ls)
-{
-    Luapp l(ls);
-    auto p = l.put<Auto>(sm_mtlua2Auto, &Auto::maintain, l.toString(2));
-
-    // 将传入到参数出栈
-    l.pop(1);
-
-    // 返回到值如栈
-    l.pushInteger(p);
-
-    l.dumpStack();
-
-    return 1;
-}
-
-int lua2Auto::l2_check(lua_State * ls)
-{
-    Luapp l(ls);
-    l.dumpStack();
-
-    auto p = l.get<Auto>(sm_mtlua2Auto, &Auto::check);
-
-    l.pushString(std::get<0>(p).c_str());
-    l.pushInteger(std::get<1>(p));
-    l.pushNumber(std::get<2>(p));
-    l.pushInteger(std::get<3>(p));
-
-    l.dumpStack();
 
     return 4;
 }
 
 // ---
-
-DEFINE_META_TABLE_NAME(luaAuto, "xt.Auto");
-
-IMPLEMENT_OPENLIB_METHOD_BEGIN(luaAuto)
-    LIST_META_TABLE_BEGIN(luaAuto, Auto)
-        ITEM_IN_TABLE("drive",         luaAuto::l_drive)
-        ITEM_IN_TABLE("fuel",          luaAuto::l_fuel)
-        ITEM_IN_TABLE("maintain",      luaAuto::l_maintain)
-        ITEM_IN_TABLE("check",         luaAuto::l_check)
-    LIST_META_TABLE_END
-
-    LIST_FUNC_TABLE_BEGIN(luaAuto, Auto)
-        ITEM_IN_TABLE("drive",         luaAuto::l_drive)
-        ITEM_IN_TABLE("fuel",          luaAuto::l_fuel)
-        ITEM_IN_TABLE("maintain",      luaAuto::l_maintain)
-        ITEM_IN_TABLE("check",         luaAuto::l_check)
-    LIST_FUNC_TABLE_END
-IMPLEMENT_OPENLIB_METHOD_END
-
-
-int luaAuto::l_drive(lua_State * ls)
-{
-//    put<Auto>(ls, &Auto::drive,
-//                     f_getString(ls, 2),
-//                     f_getInteger(ls, 3),
-//                     f_getNumber(ls, 4));
-
-    Luapp l(ls);
-    l.put<Auto>(sm_metaTable, &Auto::drive, l.toString(2), l.toInteger(3), l.toNumber(4));
-    l.pop(4);
-
-    return 0;
-}
-
-int luaAuto::l_fuel(lua_State * ls)
-{
-//    put<Auto>(ls, &Auto::fuel, f_getInteger(ls, 2));
-
-    Luapp l(ls);
-    l.put<Auto>(sm_metaTable, &Auto::fuel, l.toInteger(2));
-    l.pop(1);
-
-    return 0;
-}
-
-
-int luaAuto::l_maintain(lua_State * ls)
-{
-    Luapp l(ls);
-    auto p = l.put<Auto>(sm_metaTable, &Auto::maintain, l.toString(2));
-
-    // 将传入到参数出栈
-    l.pop(1);
-
-    // 返回到值如栈
-    l.pushInteger(p);
-
-//    auto p = put<Auto>(ls, &Auto::maintain, f_getString(ls, 2));
-//    f_setInteger(ls, p);
-//    LuaStack l(ls);
-    l.dumpStack();
-
-    return 1;
-}
-
-int luaAuto::l_check(lua_State * ls)
-{
-    Luapp l(ls);
-    l.dumpStack();
-
-    auto p = l.get<Auto>(sm_metaTable, &Auto::check);
-//    auto p = get<Auto>(ls, &Auto::check);
-
-    l.pushString(std::get<0>(p).c_str());
-    l.pushInteger(std::get<1>(p));
-    l.pushNumber(std::get<2>(p));
-    l.pushInteger(std::get<3>(p));
-
-//    f_setString(ls, std::get<0>(p));
-//    f_setInteger(ls, std::get<1>(p));
-//    f_setDouble(ls, std::get<2>(p));
-//    f_setInteger(ls, std::get<3>(p));
-
-    l.dumpStack();
-
-    return 4;
-}
 
 // ---
 
@@ -284,7 +257,7 @@ void lua_Auto_test1()
     {
         {"base", luaopen_base},
         {"io", luaopen_io},
-        {"auto", luaAuto::openlib},
+//        {"auto", luaAuto::openlib},
         {NULL, NULL}
     };
 
@@ -302,7 +275,7 @@ void lua_Auto_test2()
     {
         {"base", luaopen_base},
         {"io", luaopen_io},
-        {"auto2", lua2Auto::openlua2Auto},
+//        {"auto2", lua2Auto::openlua2Auto},
         {NULL, NULL}
     };
 
@@ -343,8 +316,11 @@ void lua_Auto_test3()
 
 //    lp->pushString("xt3.Auto");
 //    lp->getTable(LUA_REGISTRYINDEX);
-//    lp->getField(LUA_REGISTRYINDEX, "xt3.Auto");
+    lp->getField(LUA_REGISTRYINDEX, "xt3.Auto");
 //    lp->setGlobal("xt3Auto");
+    lp->tableStdcout(-1);
+
+//    lp->dumpStack();
 
     lp->doFile("auto4.lua");
 
@@ -375,8 +351,39 @@ void lua_Auto_test4()
 //    lp->pushString("xt3.Auto");
 //    lp->getTable(LUA_REGISTRYINDEX);
 //    lp->setGloabl("xt3Auto");
+    lp->getField(LUA_REGISTRYINDEX, "xt.Auto");
+    lp->tableStdcout(-1);
 
     lp->doFile("auto5.lua");
+}
+
+void lua_Auto_test5()
+{
+    START_FUNC();
+
+    static const luaL_Reg lualibs[] =
+    {
+        {"auto3",               lua3Auto::open_lua3Auto},
+        {"Car",                 luaCar::open_luaCar},
+        {"Tesla",               luaTesla::open_luaTesla},
+        {"AirVehicle",          luaAirVehicle::open_luaAirVehicle},
+        {"Seafaring",           luaSeafaring::open_luaSeafaring},
+        {"SuperCar",            luaSuperCar::open_luaSuperCar},
+        {NULL, NULL}
+    };
+
+    auto lp = Luapp::create();
+    lp->openLibs();
+    lp->requireLibs(lualibs);
+
+    lp->getField(LUA_REGISTRYINDEX, "F9872759-8308-4DDA-A5C2-740F6E285911");
+    lp->tableStdcout(-1);
+
+    lp->doFile("auto6.lua");
+
+//    lp->setGloabl("xt3Auto");
+
+
 }
 
 void luapp_test1()
@@ -387,7 +394,7 @@ void luapp_test1()
     {
         {"base", luaopen_base},
         {"io", luaopen_io},
-        {"auto", luaAuto::openlib},
+//        {"auto", luaAuto::openlib},
         {NULL, NULL}
     };
 

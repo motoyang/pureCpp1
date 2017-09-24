@@ -2,52 +2,32 @@
 #include "luapp.h"
 
 // ---
-/*
-template<typename T>
-void f_push(lua_State * ls, const T& t)
-{
-    UNUSED(ls);
-    UNUSED(t);
-    static_assert( is_decay_same<T, int>::value ||
-                is_decay_same<T, double>::value ||
-                is_decay_same<T, std::string>::value,
-                "error type!");}
-*/
+
 template<>
 void f_push(lua_State * ls, const int& i)
-{f_setInteger(ls, i);}
+{ Luapp(ls).pushInteger(i); }
 
 template<>
 void f_push(lua_State *ls, const std::string& s)
-{f_setString(ls, s);}
+{ Luapp(ls).pushString(s.c_str()); }
 
 template<>
 void f_push(lua_State *ls, const double& d)
-{f_setNumber(ls, d);}
+{ Luapp(ls).pushNumber(d); }
 
 //---
-/*
-template<typename T >
-void f_pop(lua_State * ls, T& t)
-{
-    UNUSED(ls);
-    UNUSED(t);
-    static_assert( is_decay_same<T, int>::value ||
-                is_decay_same<T, double>::value ||
-                is_decay_same<T, std::string>::value,
-                "error type!");}
-*/
+
 template<>
 void f_pop(lua_State * ls, int& i)
-{i = f_getInteger(ls, -1); lua_pop(ls, 1);}
+{ Luapp l(ls); i = l.toInteger(-1); l.pop(1); }
 
 template<>
 void f_pop(lua_State * ls, double& d)
-{d = f_getNumber(ls, -1); lua_pop(ls, 1);}
+{ Luapp l(ls); d = l.toNumber(-1); l.pop(1); }
 
 template<>
 void f_pop(lua_State * ls, std::string& s)
-{s = f_getString(ls, -1); lua_pop(ls, 1);}
+{ Luapp l(ls); s = l.toString(-1); l.pop(1); }
 
 // ---
 
@@ -117,46 +97,78 @@ void LuaPP::dumpStack(std::function<void(lua_State*, int)> f)
 
 //---
 
-void stdcpp_output(lua_State * ls, int idx)
+void stackindex_stdcout(lua_State *ls, int idx)
 {
-    std::cout << "[" << idx << "] = ";
+    Luapp l(ls);
+    std::cout << "[" << idx << "] = " << l.valueToString(idx) << std::endl;
 
-    switch (lua_type(ls, idx)) {
+}
+
+void keyvalue_stdcout(lua_State *ls)
+{
+    Luapp l(ls);
+    std::cout << "[" << l.toString(-1) << "] = " << l.valueToString(-2) << std::endl;
+}
+
+// ---
+
+std::string LuaStack::valueToString(int idx)
+{
+    std::stringstream r;
+    r << typeNameFromIndex(idx) << ": ";
+
+    switch (type(idx)) {
+    case LUA_TNONE:
+        r << "none";
+        break;
+
     case LUA_TNIL:
-        std::cout << "nil" << std::endl;
+        r << "nil";
         break;
 
     case LUA_TBOOLEAN:
-        std::cout << f_getBoolean(ls, idx) << std::endl;
+        r << std::boolalpha << toBoolean(idx);
         break;
 
     case LUA_TNUMBER:
-        std::cout << f_getNumber(ls, idx) << std::endl;
+        r << toNumber(idx);
         break;
 
     case LUA_TSTRING:
-        std::cout << f_getString(ls, idx) << std::endl;
+        r << toString(idx);
         break;
 
     case LUA_TFUNCTION:
-        std::cout << "c function: " << f_getCFunction(ls, idx) << std::endl;
+        r << toPointer(idx);
         break;
 
     case LUA_TUSERDATA:
-        std::cout << "user data: " << f_getUserdata(ls, idx) << std::endl;
+        r << toUserdata(idx);
+        break;
+
+    case LUA_TLIGHTUSERDATA:
+        r << toPointer(idx);
         break;
 
     case LUA_TTABLE:
-        std::cout << "table: " << f_getTable(ls, idx) << std::endl;
+        r << toPointer(idx);
+        break;
+
+    case LUA_TTHREAD:
+        r << toPointer(idx);
         break;
 
     default:
-        std::cout << "ttt = " << lua_typename(ls, lua_type(ls, idx)) << std::endl;
         assert(false);
     }
-};
 
-// ---
+    return r.str();
+}
+
+std::string LuaStack::typeNameFromIndex(int idx)
+{
+    return luaL_typename(m_ls, idx);
+}
 
 LuaStack::LuaStack(lua_State *ls)
     : m_ls(ls)
@@ -645,17 +657,7 @@ int LuaLState::loadFile(const char *filename)
 {
     return luaL_loadfile(m_ls, filename);
 }
-/*
-void LuaLState::newLib(const luaL_Reg l[])
-{
-    luaL_newlib(m_ls, l);
-}
 
-void LuaLState::newLibtable(const luaL_Reg l[])
-{
-    luaL_newlibtable(m_ls, l);
-}
-*/
 int LuaLState::newMetatable(const char *tname)
 {
     return luaL_newmetatable(m_ls, tname);
@@ -696,35 +698,12 @@ std::shared_ptr<Luapp> Luapp::create()
 
     return std::make_shared<Luapp>(ls, LuaState::LUA_STATE_RESOUECE_TYPE::UNIQUE_LUA_STATE);
 }
-/*
-void Luapp::objectRegister(const char *tname, const char *ftname, const luaL_Reg lib_m[], const luaL_Reg lib_f[])
+
+int Luapp::tableAppend(int idxTo, int idxFrom, bool replaceable)
 {
-    newMetatable(tname);
-    pushValue(-1);
-    setField(-2, "__index");
-    setFuncs(lib_m, 0);
-
-    //  是否需要从父类继承
-    if (ftname) {
-        // 取出父类到metatable
-        pushString(ftname);
-        getTable(LUA_REGISTRYINDEX);
-        // 栈：-1 => ftname_table, -2 => tname_table
-
-        // 用父类到metatable补充子类的metatable，模仿子类从父类继承
-        tableAdd(-2, -1, false);
-    }
-
-    // 注册类的创建方法
-    luaL_newlib(m_ls, lib_f);
-}
-*/
-
-int Luapp::tableAdd(int idxTo, int idxFrom, bool replaceable)
-{
-//    dumpStack();
-
     int iRet = 0;
+    idxTo = absIndex(idxTo);
+    idxFrom = absIndex(idxFrom);
 
     pushNil();
     // 现在的栈：-1 => nil; idxTo => tableTo, idxFrom => tableFrom
@@ -735,10 +714,10 @@ int Luapp::tableAdd(int idxTo, int idxFrom, bool replaceable)
         pushValue(-2);
         // 现在的栈：-1 => key; -2 => value; -3 => key; idxTo => tableTo, idxFrom => tableFrom
         std::string key = toString(-1);
-//dumpStack();`
+
         // 判断tableTo中是否已经有了这个key
         if (LUA_TNIL == getField(idxTo, key.c_str()) || replaceable) {
-            // key不存在或者要替换，将取出到值和key出栈
+            // key不存在或者要替换，将从tableTo中的取出的值和key出栈
             pop(2);
 
             // 将value加入tableTo，value会自动出栈
@@ -750,37 +729,46 @@ int Luapp::tableAdd(int idxTo, int idxFrom, bool replaceable)
             pop(3);
         }
         // 现在的栈：-1 => key; idxTo => tableTo, idxFrom => tableFrom
-//        pop(2);
     }
 
     return iRet;
 }
 
-int Luapp::tablePrint(int index)
+int Luapp::tableForeach(int index, std::function<void(lua_State*)> f)
 {
-    START_FUNC();
+    int iRet = 0;
+    index = absIndex(index);
 
-    lua_State* L = m_ls;
-
-    lua_pushnil(L);
+    pushNil();
     // 现在的栈：-1 => nil; index => table
-    while (lua_next(L, index))
+    while (next(index))
     {
         // 现在的栈：-1 => value; -2 => key; index => table
         // 拷贝一份 key 到栈顶，然后对它做 lua_tostring 就不会改变原始的 key 值了
-//        lua_pushvalue(L, -2);
+        pushValue(-2);
         // 现在的栈：-1 => key; -2 => value; -3 => key; index => table
-//        const char* key = lua_tostring(L, -2);
-        const char* value = lua_tostring(L, -1);
-
-//        std::cout << key << " => " << value << std::endl;
+        f(m_ls);
 
         // 弹出 value 和拷贝的 key，留下原始的 key 作为下一次 lua_next 的参数
-        lua_pop(L, 1);
+        pop(2);
+        ++iRet;
         // 现在的栈：-1 => key; index => table
     }
     // 现在的栈：index => table （最后 lua_next 返回 0 的时候它已经把上一次留下的 key 给弹出了）
     // 所以栈已经恢复到进入这个函数时的状态
+
+    return iRet;
+}
+
+void Luapp::tableStdcout(int index)
+{
+    dumpStack();
+
+    std::cout << typeNameFromIndex(index) << "(" << toPointer(index) << ") = {" << std::endl;
+    tableForeach(index, keyvalue_stdcout);
+    std::cout << "};" << std::endl;
+
+    dumpStack();
 }
 
 bool Luapp::requireLibs(const luaL_Reg *libs)
@@ -798,7 +786,6 @@ bool Luapp::doFile(const std::string &fname)
 {
     bool r = false;
 
-//    std::string scriptPath = fname;
     int status = loadFile(fname.c_str());
     if(status == LUA_OK)
     {
@@ -812,40 +799,4 @@ bool Luapp::doFile(const std::string &fname)
     }
 
     return r;
-}
-
-
-LuaTable::LuaTable(lua_State *ls)
-    : LuaLState(ls)
-{
-
-}
-
-LuaTable::~LuaTable()
-{
-
-}
-
-void LuaTable::forEach(int index)
-{
-/*    pushNil();
-    // 现在的栈：-1 => nil; index => table
-    while (next(index))
-    {
-        // 现在的栈：-1 => value; -2 => key; index => table
-        // 拷贝一份 key 到栈顶，然后对它做 lua_tostring 就不会改变原始的 key 值了
-        pushValue(-2);
-        // 现在的栈：-1 => key; -2 => value; -3 => key; index => table
-        const char* key = lua_tostring(L, -1);
-        const char* value = lua_tostring(L, -2);
-
-        printf("%s => %s\n", key, value);
-
-        // 弹出 value 和拷贝的 key，留下原始的 key 作为下一次 lua_next 的参数
-        lua_pop(L, 2);
-        // 现在的栈：-1 => key; index => table
-    }
-    // 现在的栈：index => table （最后 lua_next 返回 0 的时候它已经把上一次留下的 key 给弹出了）
-    // 所以栈已经恢复到进入这个函数时的状态
-    */
 }

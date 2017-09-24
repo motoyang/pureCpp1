@@ -13,9 +13,9 @@ public:
     Auto();
     virtual ~Auto();
 
-    void drive(const std::string& driver, int mileage, double hours);
+    virtual void drive(const std::string& driver, int mileage, double hours);
     void fuel(int quantity);
-    int maintain(const std::string& something);
+    virtual int maintain(const std::string& something);
     std::tuple<std::string, int, float, int> check() const;
 };
 
@@ -27,6 +27,45 @@ public:
 
     double music(const std::string& song);
     bool navi(const std::string& address);
+};
+
+class Tesla : public Car
+{
+public:
+    Tesla();
+    virtual ~Tesla();
+
+    int charge(double d);
+    void bluetooth(const std::string& name);
+};
+
+class AirVehicle
+{
+public:
+    AirVehicle();
+    virtual ~AirVehicle();
+
+    virtual int fly(double speed);
+};
+
+class Seafaring
+{
+public:
+    Seafaring();
+    virtual ~Seafaring();
+
+    virtual int voyage(double speed);
+    virtual std::string dive(double deep, int hours);
+};
+
+class SuperCar: public Car, public AirVehicle, public Seafaring
+{
+public:
+    SuperCar();
+    virtual ~SuperCar();
+
+    void stealth();
+    virtual std::string dive(double deep, int hours);
 };
 
 #endif // AUTO_H
