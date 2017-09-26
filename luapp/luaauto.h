@@ -2,15 +2,15 @@
 #define LUA_AUTO_H
 
 DECLARE_LUA_OBJECT_BEGIN(luaAuto)
-    EXPORT_METHOD_TO_LUA(l3_drive)
-    EXPORT_METHOD_TO_LUA(l3_fuel)
-    EXPORT_METHOD_TO_LUA(l3_maintain)
-    EXPORT_METHOD_TO_LUA(l3_check)
+    EXPORT_METHOD_TO_LUA(l_drive)
+    EXPORT_METHOD_TO_LUA(l_fuel)
+    EXPORT_METHOD_TO_LUA(l_maintain)
+    EXPORT_METHOD_TO_LUA(l_check)
 DECLARE_LUA_OBJECT_END(luaAuto)
 
 DECLARE_LUA_OBJECT_FROM_FATHER_BEGIN(luaCar, luaAuto)
-    EXPORT_METHOD_TO_LUA(lc_music)
-    EXPORT_METHOD_TO_LUA(lc_navi)
+    EXPORT_METHOD_TO_LUA(l_music)
+    EXPORT_METHOD_TO_LUA(l_navi)
 DECLARE_LUA_OBJECT_END(luaCar)
 
 DECLARE_LUA_OBJECT_FROM_FATHER_BEGIN(luaTesla, luaCar)
@@ -31,12 +31,5 @@ DECLARE_LUA_OBJECT_FROM_FATHER_BEGIN(luaSuperCar, luaTesla)
     EXPORT_METHOD_TO_LUA(l_stealth)
     EXPORT_METHOD_TO_LUA(l_dive)
 DECLARE_LUA_OBJECT_END(luaSuperCar)
-
-void lua_Auto_test1();
-void lua_Auto_test2();
-void lua_Auto_test3();
-void lua_Auto_test4();
-void lua_Auto_test5();
-void luapp_test1();
 
 #endif // LUA_AUTO_H

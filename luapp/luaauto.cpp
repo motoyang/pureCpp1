@@ -25,7 +25,7 @@ IMPLEMENT_OPENLIB_METHOD_END
 int luaSuperCar::l_stealth(lua_State * ls)
 {
     Luapp l(ls);
-    l.dispatchToC<SuperCar>(&SuperCar::stealth);
+    l.dispatchToObjectMethod<SuperCar>(&SuperCar::stealth);
 
     return 0;
 }
@@ -33,7 +33,7 @@ int luaSuperCar::l_stealth(lua_State * ls)
 int luaSuperCar::l_dive(lua_State * ls)
 {
     Luapp l(ls);
-    std::string r = l.dispatchToC<SuperCar>(&SuperCar::dive, l.toNumber(2), l.toInteger(3));
+    std::string r = l.dispatchToObjectMethod<SuperCar>(&SuperCar::dive, l.toNumber(2), l.toInteger(3));
     l.pop(2);
     l.pushString(r.c_str());
 
@@ -61,7 +61,7 @@ IMPLEMENT_OPENLIB_METHOD_END
 int luaSeafaring::l_voyage(lua_State * ls)
 {
     Luapp l(ls);
-    int r = l.dispatchToC<Seafaring>(&Seafaring::voyage, l.toNumber(2));
+    int r = l.dispatchToObjectMethod<Seafaring>(&Seafaring::voyage, l.toNumber(2));
     l.pop(1);
     l.pushInteger(r);
 
@@ -71,7 +71,7 @@ int luaSeafaring::l_voyage(lua_State * ls)
 int luaSeafaring::l_dive(lua_State * ls)
 {
     Luapp l(ls);
-    std::string r = l.dispatchToC<Seafaring>(&Seafaring::dive, l.toNumber(2), l.toInteger(3));
+    std::string r = l.dispatchToObjectMethod<Seafaring>(&Seafaring::dive, l.toNumber(2), l.toInteger(3));
     l.pop(2);
     l.pushString(r.c_str());
 
@@ -98,7 +98,7 @@ IMPLEMENT_OPENLIB_METHOD_END
 int luaAirVehicle::l_fly(lua_State * ls)
 {
     Luapp l(ls);
-    int r = l.dispatchToC<AirVehicle>(&AirVehicle::fly, l.toNumber(2));
+    int r = l.dispatchToObjectMethod<AirVehicle>(&AirVehicle::fly, l.toNumber(2));
     l.pop(1);
     l.pushInteger(r);
 
@@ -127,7 +127,7 @@ IMPLEMENT_OPENLIB_METHOD_END
 int luaTesla::l_charge(lua_State * ls)
 {
     Luapp l(ls);
-    int r = l.dispatchToC<Tesla>(&Tesla::charge, l.toNumber(2));
+    int r = l.dispatchToObjectMethod<Tesla>(&Tesla::charge, l.toNumber(2));
     l.pop(1);
     l.pushInteger(r);
 
@@ -137,7 +137,7 @@ int luaTesla::l_charge(lua_State * ls)
 int luaTesla::l_bluetooth(lua_State * ls)
 {
     Luapp l(ls);
-    l.dispatchToC<Tesla>(&Tesla::bluetooth, l.toString(2));
+    l.dispatchToObjectMethod<Tesla>(&Tesla::bluetooth, l.toString(2));
     l.pop(1);
 
     return 0;
@@ -150,8 +150,8 @@ DEFINE_META_TABLE_NAME(luaCar, "77E5E7E8-367F-4A6A-ADE7-3C17A26A0C8D")
 
 IMPLEMENT_OPENLIB_METHOD_BEGIN(luaCar)
     LIST_META_TABLE_BEGIN(luaCar, Car)
-        ITEM_IN_TABLE("music",         luaCar::lc_music)
-        ITEM_IN_TABLE("navi",          luaCar::lc_navi)
+        ITEM_IN_TABLE("music",         luaCar::l_music)
+        ITEM_IN_TABLE("navi",          luaCar::l_navi)
     LIST_META_TABLE_END
 
     LIST_FUNC_TABLE_BEGIN(luaCar, Car)
@@ -162,20 +162,20 @@ IMPLEMENT_OPENLIB_METHOD_BEGIN(luaCar)
 
 IMPLEMENT_OPENLIB_METHOD_END
 
-int luaCar::lc_music(lua_State * ls)
+int luaCar::l_music(lua_State * ls)
 {
     Luapp l(ls);
-    double r = l.dispatchToC<Car>(&Car::music, l.toString(2));
+    double r = l.dispatchToObjectMethod<Car>(&Car::music, l.toString(2));
     l.pop(1);
     l.pushNumber(r);
 
     return 1;
 }
 
-int luaCar::lc_navi(lua_State * ls)
+int luaCar::l_navi(lua_State * ls)
 {
     Luapp l(ls);
-    bool r = l.dispatchToC<Car>(&Car::navi, l.toString(2));
+    bool r = l.dispatchToObjectMethod<Car>(&Car::navi, l.toString(2));
     l.pop(1);
     l.pushBoolean(r);
 
@@ -189,10 +189,10 @@ DEFINE_META_TABLE_NAME(luaAuto, "E141BB75-DE03-4004-A700-936B68242766")
 
 IMPLEMENT_OPENLIB_METHOD_BEGIN(luaAuto)
     LIST_META_TABLE_BEGIN(luaAuto, Auto)
-        ITEM_IN_TABLE("drive",         luaAuto::l3_drive)
-        ITEM_IN_TABLE("fuel",          luaAuto::l3_fuel)
-        ITEM_IN_TABLE("maintain",      luaAuto::l3_maintain)
-        ITEM_IN_TABLE("check",         luaAuto::l3_check)
+        ITEM_IN_TABLE("drive",         luaAuto::l_drive)
+        ITEM_IN_TABLE("fuel",          luaAuto::l_fuel)
+        ITEM_IN_TABLE("maintain",      luaAuto::l_maintain)
+        ITEM_IN_TABLE("check",         luaAuto::l_check)
     LIST_META_TABLE_END
 
     LIST_FUNC_TABLE_BEGIN(luaAuto, Auto)
@@ -202,28 +202,28 @@ IMPLEMENT_OPENLIB_METHOD_BEGIN(luaAuto)
 
 IMPLEMENT_OPENLIB_METHOD_END
 
-int luaAuto::l3_drive(lua_State * ls)
+int luaAuto::l_drive(lua_State * ls)
 {
     Luapp l(ls);
-    l.dispatchToC<Auto>(&Auto::drive, l.toString(2), l.toInteger(3), l.toNumber(4));
+    l.dispatchToObjectMethod<Auto>(&Auto::drive, l.toString(2), l.toInteger(3), l.toNumber(4));
     l.pop(4);
 
     return 0;
 }
 
-int luaAuto::l3_fuel(lua_State * ls)
+int luaAuto::l_fuel(lua_State * ls)
 {
     Luapp l(ls);
-    l.dispatchToC<Auto>(&Auto::fuel, l.toInteger(2));
+    l.dispatchToObjectMethod<Auto>(&Auto::fuel, l.toInteger(2));
     l.pop(1);
 
     return 0;
 }
 
-int luaAuto::l3_maintain(lua_State * ls)
+int luaAuto::l_maintain(lua_State * ls)
 {
     Luapp l(ls);
-    auto p = l.dispatchToC<Auto>(&Auto::maintain, l.toString(2));
+    auto p = l.dispatchToObjectMethod<Auto>(&Auto::maintain, l.toString(2));
 
     // 将传入到参数出栈
     l.pop(1);
@@ -234,10 +234,10 @@ int luaAuto::l3_maintain(lua_State * ls)
     return 1;
 }
 
-int luaAuto::l3_check(lua_State * ls)
+int luaAuto::l_check(lua_State * ls)
 {
     Luapp l(ls);
-    auto p = l.dispatchToC<Auto>(&Auto::check);
+    auto p = l.dispatchToObjectMethod<Auto>(&Auto::check);
 
     l.pushString(std::get<0>(p).c_str());
     l.pushInteger(std::get<1>(p));
@@ -247,23 +247,3 @@ int luaAuto::l3_check(lua_State * ls)
     return 4;
 }
 
-// ---
-
-// ---
-
-LUAPPSHARED_C_EXPORT int luaopen_libluaauto(lua_State* L)
-{
-    static const luaL_Reg lualibs[] =
-    {
-        {"Auto",                luaAuto::open_luaAuto},
-        {"Car",                 luaCar::open_luaCar},
-        {"Tesla",               luaTesla::open_luaTesla},
-        {"AirVehicle",          luaAirVehicle::open_luaAirVehicle},
-        {"Seafaring",           luaSeafaring::open_luaSeafaring},
-        {"SuperCar",            luaSuperCar::open_luaSuperCar},
-        {NULL, NULL}
-    };
-
-    Luapp lp(L);
-    return lp.requireLibs(lualibs);
-}

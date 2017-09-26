@@ -72,6 +72,53 @@
     return 1;                                        \
 }
 
+// function输出到lua的宏，在.h文件中使用
+#define DECLARE_OPENLIB_FUNCTION(f)                   \
+    int open_##f(lua_State *ls);
+
+// function输出到lua的宏，在.cpp文件中使用
+#define IMPLEMENT_OPENLIB_FUNCTION_BEGIN(f)           \
+    int open_##f(lua_State *ls)                       \
+    {
+
+#define LIST_FUNCTIONS_BEGIN               \
+    static const struct luaL_Reg lib_f [] = {
+
+#define ITEM_IN_FUNCTIONS(f)                        \
+    {#f, lua_##f },
+
+#define LIST_FUNCTIONS_END                         \
+    {NULL,          NULL}                           \
+    };
+
+#define IMPLEMENT_OPENLIB_FUNCTION_END                 \
+    luaL_newlib(ls, lib_f);                          \
+    return 1;                                        \
+}
+
+// luapp作为so库要被链接到可执行文件时，要在可执行文件到项目中使用此宏，
+// 以便导入so中到lua对象和lua函数
+#define DECLARE_EXPORT_LIB_FUNCTION(n)     \
+__attribute__ ((visibility("default"))) extern "C" int luaopen_##n(lua_State* L);
+
+// 定义lua在require("name")时的函数，这个函数是动态库唯一的输出函数
+// 并且输出的函数名称要遵守extern "C"约定
+#define IMPLEMENT_EXPORT_LIB_BEGIN(n)   \
+__attribute__ ((visibility("default"))) extern "C" int luaopen_##n(lua_State* L) \
+{ static const luaL_Reg lua_modules[] = {
+
+#define EXPORT_MODULE_TO_LUA(n)         \
+{ n::md_##n,     n::open_##n },
+
+#define EXPORT_FUNCTIONS_TO_LUA(n)      \
+{ #n,          open_##n },
+
+#define IMPLEMENT_EXPORT_LIB_END        \
+{NULL, NULL}};                          \
+Luapp lp(L);                            \
+return lp.requireLibs(lua_modules);     \
+}
+
 #endif
 
 // ---
@@ -382,7 +429,7 @@ public:
     // 把从lua来的调用，转发到相应到c++方法，并返回执行结果
     // 注意：输入参数和返回值到处理，是调用者到责任，调用者对此也很清楚
     template<typename T, typename CM, typename... Cn>
-    auto dispatchToC(CM f, Cn... args)
+    auto dispatchToObjectMethod(CM f, Cn... args)
     {
         // 为了能够被子类调用，此处不能使用checkUData
         // such as: T **s = (T**)checkUData(1, tname);
@@ -390,6 +437,13 @@ public:
         argCheck(s != nullptr, 1, "invalid user data");
 
         auto fn = std::bind(f, *s, std::forward<Cn>(args)...);
+        return fn();
+    }
+
+    template<typename F, typename... Args>
+    auto dispatchToFunction(F f, Args... args)
+    {
+        auto fn = std::bind(f, std::forward<Args>(args)...);
         return fn();
     }
 
@@ -404,54 +458,6 @@ public:
         return pcall(countOfArgs, countOfResult, 0);
     }
 
-};
-
-// ---
-class LuaPP
-{
-    lua_State *m_ls;
-
-public:
-    LuaPP();
-    virtual ~LuaPP();
-
-    bool requireLibs(const luaL_Reg *libs);
-    bool doFile(const std::string& fname);
-    void dumpStack(std::function<void(lua_State*, int)> f = stackindex_stdcout);
-
-    template <typename... Args> int push(Args&&... args)
-    {
-        int countOfArgs = expandArgs(m_ls,
-                [](lua_State *ls, auto t){f_push(ls, t);},
-                std::forward<Args>(args)...);
-
-        return countOfArgs;
-    }
-
-    template <typename... Args> int pop(Args&&... args)
-    {
-        int countOfArgs = popArgs(m_ls,
-                std::forward<Args>(args)...);
-
-        return countOfArgs;
-    }
-
-    template<typename T> int getGlobal(const std::string& name, T& tValue) {
-        lua_getglobal(m_ls, name.c_str());
-        f_pop(m_ls, tValue);
-        return 0;
-    }
-
-    template <typename... Args>
-    int doFunction(const std::string& name, int countOfResult, Args... args)
-    {
-        // lua的函数名入栈
-        lua_getglobal(m_ls, name.c_str());
-        // lua函数的参数入栈
-        int countOfArgs = push(std::forward<Args>(args)...);
-        // 执行lua函数
-        return lua_pcall(m_ls, countOfArgs, countOfResult, 0);
-    }
 };
 
 #endif // LUAPP_H

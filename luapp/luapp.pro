@@ -24,12 +24,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += luapp.cpp \
     auto.cpp \
-    luaauto.cpp
+    luaauto.cpp \
+    export.cpp \
+    fun.cpp \
+    luafun.cpp
 
 HEADERS += luapp.h\
         luapp_global.h \
     auto.h \
-    luaauto.h
+    luaauto.h \
+    export.h \
+    fun.h \
+    luafun.h
 
 unix {
     target.path = /usr/lib
