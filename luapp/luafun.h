@@ -1,8 +1,14 @@
 #ifndef LUAFUN_H
 #define LUAFUN_H
 
+// ---
+
 DECLARE_OPENLIB_FUNCTION(some_funs)
 
-int lua_add(lua_State * ls);
+// ---
+
+EXPORT_FUNCTION_TO_LUA(lua_add)
+
+// ---
 
 #endif // LUAFUN_H

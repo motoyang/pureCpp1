@@ -84,17 +84,20 @@
 #define LIST_FUNCTIONS_BEGIN               \
     static const struct luaL_Reg lib_f [] = {
 
-#define ITEM_IN_FUNCTIONS(f)                        \
+#define ITEM_IN_FUNCTIONS(f)                         \
     {#f, lua_##f },
 
-#define LIST_FUNCTIONS_END                         \
-    {NULL,          NULL}                           \
+#define LIST_FUNCTIONS_END                           \
+    {NULL,          NULL}                            \
     };
 
-#define IMPLEMENT_OPENLIB_FUNCTION_END                 \
+#define IMPLEMENT_OPENLIB_FUNCTION_END               \
     luaL_newlib(ls, lib_f);                          \
     return 1;                                        \
 }
+
+#define EXPORT_FUNCTION_TO_LUA(f)                    \
+    int f(lua_State * ls);
 
 // luapp作为so库要被链接到可执行文件时，要在可执行文件到项目中使用此宏，
 // 以便导入so中到lua对象和lua函数
@@ -180,11 +183,13 @@ int countOfArgs(Args&&... args)
 }
 
 // ---
+
 // stackindex的默认输入函数
 void stackindex_stdcout(lua_State * ls, int idx);
 
 // table的默认输出函数，栈顶就是key和value
 void keyvalue_stdcout(lua_State * ls);
+
 // ---
 
 class LuaStack
@@ -406,6 +411,30 @@ public:
     int requireLibs(const luaL_Reg *libs);
     bool doFile(const std::string& fname);
 
+    template <typename T>
+    void setGlobalValue(const char * name, T value)
+    {
+        pushN(std::forward<T>(value));
+        setGlobal(name);
+    }
+
+    template <typename T>
+    bool getGlobalValue(const char * name, T& value)
+    {
+        bool bRet = false;
+        if (getGlobal(name) != LUA_TNIL) {
+            popN(std::forward<T>(value));
+            bRet = true;
+        }
+        return bRet;
+    }
+/*
+    template <typename... Args>
+    bool setTable(const char * name, Args... args)
+    {
+
+    }
+*/
     template<typename T> int newObject(const char * mtname)
     {
         T **s = (T**)newUserdata(sizeof(T*));  // lua will manage Student** pointer
@@ -428,15 +457,15 @@ public:
 
     // 把从lua来的调用，转发到相应到c++方法，并返回执行结果
     // 注意：输入参数和返回值到处理，是调用者到责任，调用者对此也很清楚
-    template<typename T, typename CM, typename... Cn>
-    auto dispatchToObjectMethod(CM f, Cn... args)
+    template<typename T, typename CM, typename... Args>
+    auto dispatchToObjectMethod(CM f, Args... args)
     {
         // 为了能够被子类调用，此处不能使用checkUData
         // such as: T **s = (T**)checkUData(1, tname);
         T **s = (T**)toUserdata(1);
         argCheck(s != nullptr, 1, "invalid user data");
 
-        auto fn = std::bind(f, *s, std::forward<Cn>(args)...);
+        auto fn = std::bind(f, *s, std::forward<Args>(args)...);
         return fn();
     }
 
@@ -458,6 +487,16 @@ public:
         return pcall(countOfArgs, countOfResult, 0);
     }
 
+    template <typename... Args>
+    int dispatchToLua2(const std::string& name, Args... args)
+    {
+        // lua的函数名入栈
+        getGlobal(name.c_str());
+        // lua函数的参数入栈
+        int countOfArgs = pushN(std::forward<Args>(args)...);
+        // 执行lua函数
+        return pcall(countOfArgs, LUA_MULTRET, 0);
+    }
 };
 
 #endif // LUAPP_H
