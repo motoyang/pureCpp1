@@ -9,8 +9,7 @@ SOURCES += main.cpp \
     auto.cpp \
     luaauto.cpp
 
-DISTFILES += \
-    auto1.lua
+DISTFILES +=
 
 HEADERS += \
     luapp.h \

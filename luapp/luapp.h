@@ -133,10 +133,13 @@ template<>
 void f_push(lua_State * ls, const int& i);
 
 template<>
-void f_push(lua_State *ls, const std::string& s);
+void f_push(lua_State *ls, const double& d);
 
 template<>
-void f_push(lua_State *ls, const double& d);
+void f_push(lua_State *ls, const std::string& s);
+
+template<char const*>
+void f_push(lua_State *ls, char const* const& s);
 
 // ---
 

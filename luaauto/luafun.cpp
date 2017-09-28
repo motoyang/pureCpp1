@@ -1,5 +1,4 @@
-#include "luapp_global.h"
-#include "luapp.h"
+#include "luaauto_global.h"
 #include "fun.h"
 #include "luafun.h"
 

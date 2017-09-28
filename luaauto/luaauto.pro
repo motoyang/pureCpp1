@@ -1,18 +1,18 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-09-26T15:54:01
+# Project created by QtCreator 2017-09-28T13:41:25
 #
 #-------------------------------------------------
 
 QT       -= core gui
 
-TARGET = luapp
+TARGET = luaauto
 TEMPLATE = lib
 
-DEFINES += LUAPP_LIBRARY
+DEFINES += LUAAUTO_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
-# any feature of Qt which as been marked as deprecated (the exact warnings
+# any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
@@ -22,10 +22,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += luapp.cpp
+SOURCES += \
+        luaauto.cpp \
+    ../luapp/luapp.cpp \
+    auto.cpp \
+    export.cpp \
+    fun.cpp \
+    luafun.cpp
 
-HEADERS += luapp.h\
-        luapp_global.h
+HEADERS += \
+        luaauto.h \
+        luaauto_global.h \ 
+    ../luapp/luapp.h \
+    auto.h \
+    export.h \
+    fun.h \
+    luafun.h
 
 unix {
     target.path = /usr/lib
@@ -33,7 +45,7 @@ unix {
 }
 
 # Use Precompiled headers (PCH)
-PRECOMPILED_HEADER = luapp_global.h
+PRECOMPILED_HEADER = luaauto_global.h
 
 INCLUDEPATH += /usr/local/include ../include
 LIBS += -L/usr/local/lib -llua
@@ -41,7 +53,7 @@ LIBS += -L/usr/local/lib -llua
 CONFIG += c++14 shared
 
 QMAKE_CXXFLAGS -= -mmacosx-version-min=10.9
-#QMAKE_CXXFLAGS += -fvisibility=hidden
+QMAKE_CXXFLAGS += -fvisibility=hidden
 QMAKE_LFLAGS -= -mmacosx-version-min=10.9
 #QMAKE_LFLAGS += -mmacosx-version-min=10.12
 #QMAKE_LFLAGS += -shared -fPIC

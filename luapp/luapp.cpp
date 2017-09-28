@@ -3,6 +3,21 @@
 
 // ---
 
+//template<>
+//void f_push(lua_State *ls, const char* const& s)
+//{ Luapp(ls).pushString(s); }
+
+//template<char const*>
+template<>
+void f_push<char const*>(lua_State * ls, char const* const& s)
+{ Luapp(ls).pushString(s); }
+
+
+//template<char const*>
+//void f_push(lua_State * ls, char const*  const& s);
+
+// ---
+
 template<>
 void f_push(lua_State * ls, const int& i)
 { Luapp(ls).pushInteger(i); }
@@ -424,6 +439,11 @@ void LuaState::close()
 int LuaState::gc(int what, int data)
 {
     return lua_gc(m_ls, what, data);
+}
+
+int LuaState::getGlobal(const char *name)
+{
+    return lua_getglobal(m_ls, name);
 }
 
 int LuaState::getTable(int idx)

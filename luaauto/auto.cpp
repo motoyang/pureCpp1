@@ -1,4 +1,4 @@
-#include "luapp_global.h"
+#include "luaauto_global.h"
 #include "auto.h"
 
 Auto::Auto()
