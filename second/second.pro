@@ -5,19 +5,16 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     luapp.cpp \
-    luaobject.cpp \
-    auto.cpp \
-    luaauto.cpp
+    printf.cpp
 
 DISTFILES +=
 
 HEADERS += \
     luapp.h \
     ../include/purecpp1.h \
-    luaobject.h \
-    auto.h \
-    luaauto.h \
-    precompiled.h
+    precompiled.h \
+    printf.h \
+    lprefix.h
 
 # Use Precompiled headers (PCH)
 PRECOMPILED_HEADER = precompiled.h

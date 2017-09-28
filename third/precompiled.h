@@ -10,5 +10,6 @@
 #include <lua.hpp>
 #include "spdlog/spdlog.h"
 #include "purecpp1.h"
+#include "../luapp/luapp.h"
 
 #endif // PRECOMPILED_H

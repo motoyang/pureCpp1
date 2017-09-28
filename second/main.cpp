@@ -368,12 +368,13 @@ int main(int argc, char *argv[])
 //    lua_Auto_test3();
 //    lua_Auto_test4();
 //    lua_Auto_test4();
-    lua_Auto_test5();
+//    lua_Auto_test5();
 //    luapp_test1();
 
 //    expandArgs([](auto t){std::cout << t << " <- " << std::endl;}, 1, 2.2, 3.3, "abcdefg");
 //    expandArgs([](auto t){printarg(t);}, 1, 2.2, 3.3, "abcdefg");
 
+    main1();
     cout << "--- end." << endl;
     return 0;
 }
