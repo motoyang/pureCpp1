@@ -8,6 +8,7 @@ DECLARE_OPENLIB_FUNCTION(some_funs)
 // ---
 
 EXPORT_FUNCTION_TO_LUA(lua_add)
+EXPORT_FUNCTION_TO_LUA(lua_sub)
 
 // ---
 
