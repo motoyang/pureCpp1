@@ -3,32 +3,41 @@
 
 // ---
 
-//template<>
-//void f_push(lua_State *ls, const char* const& s)
-//{ Luapp(ls).pushString(s); }
-
-//template<char const*>
 template<>
-void f_push<char const*>(lua_State * ls, char const* const& s)
-{ Luapp(ls).pushString(s); }
-
-
-//template<char const*>
-//void f_push(lua_State * ls, char const*  const& s);
-
-// ---
-
-template<>
-void f_push(lua_State * ls, const int& i)
+void f_push(lua_State * ls, int const& i)
 { Luapp(ls).pushInteger(i); }
 
 template<>
-void f_push(lua_State *ls, const std::string& s)
+void f_push(lua_State *ls, lua_Number const& d)
+{ Luapp(ls).pushNumber(d); }
+
+template<>
+void f_push(lua_State *ls, std::string const& s)
 { Luapp(ls).pushString(s.c_str()); }
 
 template<>
-void f_push(lua_State *ls, const double& d)
-{ Luapp(ls).pushNumber(d); }
+void f_push(lua_State * ls, char const* const& s)
+{ Luapp(ls).pushString(s); }
+
+template<>
+void f_push(lua_State * ls, lua_State* const& i)
+{ UNUSED(ls); Luapp((lua_State*)i).pushThread(); }
+
+template<>
+void f_push(lua_State * ls, lua_CFunction const& i)
+{ Luapp(ls).pushCClosure(i, 0); }
+
+template<>
+void f_push(lua_State * ls, void* const& i)
+{ Luapp(ls).pushLightUserdata((void*)i); }
+
+template<>
+void f_push(lua_State * ls, bool const& i)
+{ Luapp(ls).pushBoolean(i); }
+
+template<>
+void f_push(lua_State * ls, lua_Integer const& i)
+{ Luapp(ls).pushInteger(i); }
 
 //---
 
@@ -37,12 +46,32 @@ void f_pop(lua_State * ls, int& i)
 { Luapp l(ls); i = l.toInteger(-1); l.pop(1); }
 
 template<>
-void f_pop(lua_State * ls, double& d)
+void f_pop(lua_State * ls, lua_Number& d)
 { Luapp l(ls); d = l.toNumber(-1); l.pop(1); }
 
 template<>
 void f_pop(lua_State * ls, std::string& s)
 { Luapp l(ls); s = l.toString(-1); l.pop(1); }
+
+template<>
+void f_pop(lua_State * ls, lua_State*& s)
+{ Luapp l(ls); s = l.toThread(-1); l.pop(1); }
+
+template<>
+void f_pop(lua_State * ls, lua_CFunction& s)
+{ Luapp l(ls); s = l.toCFunction(-1); l.pop(1); }
+
+template<>
+void f_pop(lua_State * ls, void*& s)
+{ Luapp l(ls); s = l.toUserdata(-1); l.pop(1); }
+
+template<>
+void f_pop(lua_State * ls, bool& s)
+{ Luapp l(ls); s = l.toBoolean(-1); l.pop(1); }
+
+template<>
+void f_pop(lua_State * ls, lua_Integer& s)
+{ Luapp l(ls); s = l.toInteger(-1); l.pop(1); }
 
 //---
 
@@ -232,7 +261,7 @@ lua_Integer LuaStack::toInteger(int idx) const
 
 bool LuaStack::toBoolean(int idx) const
 {
-    return lua_isboolean(m_ls, idx) == 1;
+    return lua_toboolean(m_ls, idx) == 1;
 }
 
 std::string LuaStack::toString(int idx) const
@@ -312,7 +341,11 @@ std::string LuaStack::pushVFString(const char *fmt, va_list argp)
 
 std::string LuaStack::pushFString(const char *fmt, ...)
 {
-    return std::string(lua_pushfstring(m_ls, fmt));
+    va_list args;
+    va_start(args, fmt);
+    std::string r = pushVFString(fmt, args);
+    va_end(args);
+    return r;
 }
 
 void LuaStack::pushCClosure(lua_CFunction fn, int n)
@@ -651,6 +684,11 @@ std::shared_ptr<Luapp> Luapp::create()
     }
 
     return std::make_shared<Luapp>(ls, LuaState::LUA_STATE_RESOUECE_TYPE::UNIQUE_LUA_STATE);
+}
+
+lua_State *Luapp::getLuaState() const
+{
+    return m_ls;
 }
 
 int Luapp::tableAppend(int idxTo, int idxFrom, bool replaceable)

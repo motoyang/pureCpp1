@@ -41,7 +41,7 @@ LIBS += -L/usr/local/lib -llua
 CONFIG += c++14 shared
 
 QMAKE_CXXFLAGS -= -mmacosx-version-min=10.9
-#QMAKE_CXXFLAGS += -fvisibility=hidden
+QMAKE_CXXFLAGS += -fvisibility=hidden
 QMAKE_LFLAGS -= -mmacosx-version-min=10.9
 #QMAKE_LFLAGS += -mmacosx-version-min=10.12
 #QMAKE_LFLAGS += -shared -fPIC

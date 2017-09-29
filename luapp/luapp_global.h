@@ -9,6 +9,8 @@
 #include <functional>
 #include <lua.hpp>
 
+#include "purecpp1.h"
+
 #if defined(LUAPP_LIBRARY)
 #  define LUAPPSHARED_C_EXPORT __attribute__ ((visibility("default"))) extern "C"
 #  define LUAPPSHARED_CPP_EXPORT __attribute__ ((visibility("default")))

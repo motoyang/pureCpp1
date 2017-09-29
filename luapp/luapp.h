@@ -64,7 +64,7 @@
 
 #define INHERIT_METHOD_FROM_FATHER(f)                       \
     l.getMetatable(f::mt_##f);                              \
-    l.tableAppend(l.absIndex(-2), l.absIndex(-1), false);   \
+    l.tableAppend((-2), (-1), false);                \
     l.pop(1);
 
 #define IMPLEMENT_OPENLIB_METHOD_END                 \
@@ -128,33 +128,10 @@ return 1;                               \
 // ---
 
 template<typename T>
-void f_push(lua_State * ls, const T& t);
-
-template<>
-void f_push(lua_State * ls, const int& i);
-
-template<>
-void f_push(lua_State *ls, const double& d);
-
-template<>
-void f_push(lua_State *ls, const std::string& s);
-
-template<char const*>
-void f_push(lua_State *ls, char const* const& s);
-
-// ---
+void f_push(lua_State * ls, T const& t);
 
 template<typename T >
 void f_pop(lua_State * ls, T& t);
-
-template<>
-void f_pop(lua_State * ls, int& i);
-
-template<>
-void f_pop(lua_State * ls, double& d);
-
-template<>
-void f_pop(lua_State * ls, std::string& s);
 
 // ---
 
@@ -407,6 +384,7 @@ public:
 
     static std::shared_ptr<Luapp> create(lua_Alloc f, void *ud);
     static std::shared_ptr<Luapp> create();
+    lua_State* getLuaState() const;
 
     int tableAppend(int idxTo, int idxFrom, bool replaceable);
     int tableForeach(int index, std::function<void(lua_State*)> f);
@@ -432,13 +410,7 @@ public:
         }
         return bRet;
     }
-/*
-    template <typename... Args>
-    bool setTable(const char * name, Args... args)
-    {
 
-    }
-*/
     template<typename T> int newObject(const char * mtname)
     {
         T **s = (T**)newUserdata(sizeof(T*));  // lua will manage Student** pointer
