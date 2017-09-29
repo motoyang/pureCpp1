@@ -3,28 +3,6 @@
 
 // ---
 
-IMPLEMENT_OPENLIB_FUNCTION_BEGIN(spdlogger)
-    LIST_FUNCTIONS_BEGIN
-        ITEM_IN_FUNCTIONS(get)
-        ITEM_IN_FUNCTIONS(drop)
-        ITEM_IN_FUNCTIONS(drop_all)
-        ITEM_IN_FUNCTIONS(set_pattern)
-        ITEM_IN_FUNCTIONS(set_level)
-
-        ITEM_IN_FUNCTIONS(basic_logger)
-        ITEM_IN_FUNCTIONS(rotating_logger)
-        ITEM_IN_FUNCTIONS(daily_logger)
-
-        ITEM_IN_FUNCTIONS(stdout_logger)
-        ITEM_IN_FUNCTIONS(stderr_logger)
-        ITEM_IN_FUNCTIONS(stdout_color)
-        ITEM_IN_FUNCTIONS(stderr_color)
-
-    LIST_FUNCTIONS_END
-IMPLEMENT_OPENLIB_FUNCTION_END
-
-// ---
-
 DEFINE_MODULE_NAME(lua_spdlogger_object, "logger_object")
 DEFINE_META_TABLE_NAME(lua_spdlogger_object, "496DA522-71FE-48B6-A270-A4186353AEEF")
 
@@ -44,17 +22,39 @@ IMPLEMENT_OPENLIB_METHOD_END
 
 // ---
 
+//}
+
+spdlog::logger* lua_spdlogger_object::getLogger(lua_State* ls)
+{
+    Luapp l(ls);
+//      spdlog::logger **s = (spdlog::logger**)checkUData(1, tname);
+    spdlog::logger **s = (spdlog::logger**)l.toUserdata(1);
+    l.argCheck(s != nullptr, 1, "invalid user data");
+
+    return *s;
+}
+
 int lua_spdlogger_object::l_trace(lua_State * ls)
 {
+    Luapp l(ls);
+    getLogger(ls)->trace(l.toString(2));
 
-    return 1;
+    return 0;
 }
 
 int lua_spdlogger_object::l_debug(lua_State * ls)
 {
+    Luapp l(ls);
+    getLogger(ls)->debug(l.toString(2));
 
     return 1;
 }
+
+//int lua_spdlogger_object::l_debug(lua_State * ls)
+//{
+
+//    return 1;
+//}
 
 // ---
 
@@ -67,7 +67,7 @@ int lua_get(lua_State * ls)
     spdlog::logger **s = (spdlog::logger**)lp.newUserdata(sizeof(spdlog::logger*));
     *s = logger.get();
 
-    lp.getMetatable("basic_logger");
+    lp.getMetatable(lua_spdlogger_object::mt_lua_spdlogger_object);
     lp.setMetatable(-2);
 
     // 返回给Lua的只有logger*一个变量
@@ -104,7 +104,7 @@ int lua_basic_logger(lua_State * l)
     spdlog::logger **s = (spdlog::logger**)lp.newUserdata(sizeof(spdlog::logger*));
     *s = bl.get();
 
-    lp.getMetatable("basic_logger");
+    lp.getMetatable(lua_spdlogger_object::mt_lua_spdlogger_object);
     lp.setMetatable(-2);
 
     // 返回给Lua的只有logger*一个变量
@@ -141,10 +141,3 @@ int lua_stderr_color(lua_State * l)
     return 1;
 }
 
-// ---
-
-IMPLEMENT_EXPORT_LIB_BEGIN(liblualogger)
-    EXPORT_MODULE_TO_LUA(lua_spdlogger_object)
-
-    EXPORT_FUNCTIONS_TO_LUA(spdlogger)
-IMPLEMENT_EXPORT_LIB_END

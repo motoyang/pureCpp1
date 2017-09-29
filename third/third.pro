@@ -1,18 +1,29 @@
-TEMPLATE = app
-CONFIG += console c++14
-CONFIG -= app_bundle
-CONFIG -= qt core
+QT       -= core gui
+
+TARGET = lualogger
+TEMPLATE = lib
+CONFIG += c++14 shared
 
 SOURCES += main.cpp \
     luaspdloger.cpp \
     spdloger.cpp \
-    ../luapp/luapp.cpp
+    ../luapp/luapp.cpp \
+    fun.cpp \
+    export.cpp
 
 HEADERS += \
     precompiled.h \
     luaspdloger.h \
     spdloger.h \
-    ../luapp/luapp.h
+    ../luapp/luapp.h \
+    fun.h \
+    export.h
+
+
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}
 
 # Use Precompiled headers (PCH)
 PRECOMPILED_HEADER = precompiled.h

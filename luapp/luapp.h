@@ -119,7 +119,8 @@ __attribute__ ((visibility("default"))) extern "C" int luaopen_##n(lua_State* L)
 #define IMPLEMENT_EXPORT_LIB_END        \
 {NULL, NULL}};                          \
 Luapp lp(L);                            \
-return lp.requireLibs(lua_modules);     \
+lp.requireLibs(lua_modules);            \
+return 1;                               \
 }
 
 #endif
