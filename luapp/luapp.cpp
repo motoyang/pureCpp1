@@ -569,11 +569,6 @@ void LuaState::concat(int n)
     return lua_concat(m_ls, n);
 }
 
-void LuaState::len(int idx)
-{
-    return lua_len(m_ls, idx);
-}
-
 size_t LuaState::stringToNumber(const char *s)
 {
     return lua_stringtonumber(m_ls, s);
@@ -610,14 +605,100 @@ lua_State *LuaLState::newLState()
     return luaL_newstate();
 }
 
+LuaLBuffer LuaLState::newBuffer()
+{
+    LuaLBuffer lb;
+    luaL_buffinit(m_ls, &lb.m_b);
+
+    return lb;
+}
+
+LuaLBuffer LuaLState::newBuffer(size_t sz)
+{
+    LuaLBuffer lb;
+    luaL_buffinitsize(m_ls, &lb.m_b, sz);
+
+    return lb;
+}
+
 int LuaLState::getMetatable(const char *tname)
 {
     return luaL_getmetatable(m_ls, tname);
 }
 
+int LuaLState::getSubtable(int idx, const char *e)
+{
+    return luaL_getsubtable(m_ls, idx, e);
+}
+
+const char *LuaLState::gsub(const char *s, const char *p, const char *r)
+{
+    return luaL_gsub(m_ls, s, p, r);
+}
+
+int LuaLState::len(int idx) const
+{
+    return luaL_len(m_ls, idx);
+}
+
+int LuaLState::loadBuffer(const char *buff, size_t sz, const char *name)
+{
+    return luaL_loadbuffer(m_ls, buff, sz, name);
+}
+
+int LuaLState::loadBufferX(const char *buff, size_t sz, const char *name, const char *mode)
+{
+    return luaL_loadbufferx(m_ls, buff, sz, name, mode);
+}
+
 void *LuaLState::checkUData(int arg, const char *tname)
 {
     return luaL_checkudata(m_ls, arg, tname);
+}
+
+lua_Integer LuaLState::checkInteger(int arg)
+{
+    return luaL_checkinteger(m_ls, arg);
+}
+
+const char *LuaLState::checkLString(int arg, size_t *l)
+{
+    return luaL_checklstring(m_ls, arg, l);
+}
+
+lua_Number LuaLState::checkNumber(int arg)
+{
+    return luaL_checknumber(m_ls, arg);
+}
+
+//int LuaLState::checkOption(int arg, const char *def, const char * const lst[])
+//{
+//    return luaL_checkoption(m_ls, arg, def, lst);
+//}
+
+void LuaLState::checkStack(int sz, const char *msg)
+{
+    luaL_checkstack(m_ls, sz, msg);
+}
+
+const char *LuaLState::checkString(int arg)
+{
+    return luaL_checkstring(m_ls, arg);
+}
+
+void LuaLState::checkType(int arg, int t)
+{
+    luaL_checktype(m_ls, arg, t);
+}
+
+int LuaLState::callMeta(int obj, const char *e)
+{
+    return luaL_callmeta(m_ls, obj, e);
+}
+
+void LuaLState::checkAny(int arg)
+{
+    luaL_checkany(m_ls, arg);
 }
 
 int LuaLState::argError(int arg, const char *extramsg)
@@ -635,15 +716,95 @@ void LuaLState::openLibs()
     luaL_openlibs(m_ls);
 }
 
+lua_Integer LuaLState::optInteger(int arg, lua_Integer d)
+{
+    return luaL_optinteger(m_ls, arg, d);
+}
+
+const char *LuaLState::optLString(int arg, const char *d, size_t *l)
+{
+    return luaL_optlstring(m_ls, arg, d, l);
+}
+
+lua_Number LuaLState::optNumber(int arg, lua_Number d)
+{
+    return luaL_optnumber(m_ls, arg, d);
+}
+
+const char *LuaLState::optString(int arg, const char *d)
+{
+    return luaL_optstring(m_ls, arg, d);
+}
+
+int LuaLState::ref(int t)
+{
+    return luaL_ref(m_ls, t);
+}
+
 void LuaLState::requireF(const char *modname, lua_CFunction openf, int glb)
 {
     luaL_requiref(m_ls, modname, openf, glb);
+}
+
+void LuaLState::checkVersion() const
+{
+    return luaL_checkversion(m_ls);
 }
 
 int LuaLState::loadFile(const char *filename)
 {
     return luaL_loadfile(m_ls, filename);
 }
+
+int LuaLState::loadFileX(const char *filename, const char *mode)
+{
+    return luaL_loadfilex(m_ls, filename, mode);
+}
+
+int LuaLState::loadString(const char *s)
+{
+    return luaL_loadstring(m_ls, s);
+}
+
+//void LuaLState::newLib(const luaL_Reg l[])
+//{
+//    luaL_newlib(m_ls, l);
+//}
+
+//void LuaLState::newLibTable(const luaL_Reg l[])
+//{
+//    luaL_newlibtable(m_ls, l);
+//}
+
+int LuaLState::doFile(const char *filename)
+{
+    return luaL_dofile(m_ls, filename);
+}
+
+int LuaLState::doString(const char *str)
+{
+    return luaL_dostring(m_ls, str);
+}
+
+int LuaLState::execResult(int stat)
+{
+    return luaL_execresult(m_ls, stat);
+}
+
+int LuaLState::fileResult(int stat, const char *fname)
+{
+    return luaL_fileresult(m_ls, stat, fname);
+}
+
+int LuaLState::getMetaField(int obj, const char *e)
+{
+    return luaL_getmetafield(m_ls, obj, e);
+}
+
+//int LuaLState::error(const char *fmt)
+//{
+//    return luaL_error(m_ls, fmt, )
+//}
 
 int LuaLState::newMetatable(const char *tname)
 {
@@ -653,6 +814,36 @@ int LuaLState::newMetatable(const char *tname)
 void LuaLState::setFuncs(const luaL_Reg *l, int nup)
 {
     luaL_setfuncs(m_ls, l, nup);
+}
+
+//void LuaLState::setMetatable(const char *tname)
+//{
+//    luaL_setmetatable(m_ls, tname);
+//}
+
+void LuaLState::testUData(int arg, const char *tname)
+{
+    luaL_testudata(m_ls, arg, tname);
+}
+
+const char *LuaLState::toLString(int idx, size_t *len)
+{
+    return luaL_tolstring(m_ls, idx, len);
+}
+
+void LuaLState::traceBack(lua_State *l1, const char *msg, int level)
+{
+    luaL_traceback(m_ls, l1, msg, level);
+}
+
+void LuaLState::unRef(int t, int ref)
+{
+    luaL_unref(m_ls, t, ref);
+}
+
+void LuaLState::where(int lvl)
+{
+    luaL_where(m_ls, lvl);
 }
 
 Luapp::Luapp(lua_State *ls, LuaState::LUA_STATE_RESOUECE_TYPE resourceType)
@@ -793,4 +984,49 @@ bool Luapp::doFile(const std::string &fname)
     }
 
     return r;
+}
+
+void LuaLBuffer::addChar(char c)
+{
+    luaL_addchar(&m_b, c);
+}
+
+void LuaLBuffer::addLString(const char *s, size_t l)
+{
+    luaL_addlstring(&m_b, s, l);
+}
+
+void LuaLBuffer::addSize(size_t n)
+{
+    luaL_addsize(&m_b, n);
+}
+
+void LuaLBuffer::addString(const char *s)
+{
+    luaL_addstring(&m_b, s);
+}
+
+void LuaLBuffer::addValue()
+{
+    luaL_addvalue(&m_b);
+}
+
+char *LuaLBuffer::prepBuffer()
+{
+    return luaL_prepbuffer(&m_b);
+}
+
+char *LuaLBuffer::prepBufferSize(size_t sz)
+{
+    return luaL_prepbuffsize(&m_b, sz);
+}
+
+void LuaLBuffer::pushResult()
+{
+    luaL_pushresult(&m_b);
+}
+
+void LuaLBuffer::pushResultSize(size_t sz)
+{
+    luaL_pushresultsize(&m_b, sz);
 }

@@ -345,11 +345,29 @@ public:
     int error();
     int next(int idx);
     void concat(int n);
-    void len(int idx);
     size_t stringToNumber(const char *s);
     lua_Alloc getAllocF(void **ud);
     void setAllocF(lua_Alloc f, void *ud);
     void *getExtraSpace();
+};
+
+// ---
+
+struct LuaLBuffer
+{
+    luaL_Buffer m_b;
+
+    void addChar(char c);
+    void addLString(const char* s, size_t l);
+    void addSize(size_t n);
+    void addString(const char* s);
+    void addValue();
+
+    char* prepBuffer();
+    char* prepBufferSize(size_t sz);
+
+    void pushResult();
+    void pushResultSize(size_t sz);
 };
 
 // ---
@@ -362,15 +380,54 @@ public:
 
     // luaL_*
     static lua_State *newLState();
-    int getMetatable(const char* tname);
-    void * checkUData(int arg, const char *tname);
-    int argError(int arg, const char *extramsg);
+    LuaLBuffer newBuffer();
+    LuaLBuffer newBuffer(size_t sz);
+
     void argCheck(int cond, int arg, const char *extramsg);
-    void openLibs();
-    void requireF(const char *modname, lua_CFunction openf, int glb);
+    int argError(int arg, const char *extramsg);
+    int callMeta(int obj, const char* e);
+    void checkAny(int arg);
+    lua_Integer checkInteger(int arg);
+    const char *checkLString(int arg, size_t *l);
+    lua_Number checkNumber(int arg);
+//    int checkOption(int arg, const char *def, const char *const lst[]);
+    void checkStack(int sz, const char *msg);
+    const char *checkString(int arg);
+    void checkType(int arg, int t);
+    void * checkUData(int arg, const char *tname);
+    void checkVersion() const;
+    int doFile(const char *filename);
+    int doString(const char *str);
+    int error(const char *fmt, ...);
+    int execResult(int stat);
+    int fileResult(int stat, const char *fname);
+    int getMetaField(int obj, const char *e);
+    int getMetatable(const char* tname);
+    int getSubtable(int idx, const char *e);
+    const char *gsub(const char *s, const char *p, const char *r);
+    int len(int idx) const;
+    int loadBuffer(const char *buff, size_t sz, const char *name);
+    int loadBufferX(const char *buff, size_t sz, const char *name, const char *mode);
     int loadFile(const char *filename);
+    int loadFileX(const char *filename, const char *mode);
+    int loadString(const char *s);
+//    void newLib(const luaL_Reg l[]);
+//    void newLibTable(const luaL_Reg l[]);
     int newMetatable(const char *tname);
+    void openLibs();
+    lua_Integer optInteger(int arg, lua_Integer d);
+    const char *optLString(int arg, const char *d, size_t *l);
+    lua_Number optNumber(int arg, lua_Number d);
+    const char *optString(int arg, const char *d);
+    int ref(int t);
+    void requireF(const char *modname, lua_CFunction openf, int glb);
     void setFuncs(const luaL_Reg *l, int nup);
+//    void setMetatable(const char *tname);
+    void testUData(int arg, const char* tname);
+    const char *toLString(int idx, size_t *len);
+    void traceBack(lua_State* l1, const char *msg, int level);
+    void unRef(int t, int ref);
+    void where(int lvl);
 
 };
 
