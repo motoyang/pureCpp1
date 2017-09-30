@@ -816,10 +816,10 @@ void LuaLState::setFuncs(const luaL_Reg *l, int nup)
     luaL_setfuncs(m_ls, l, nup);
 }
 
-//void LuaLState::setMetatable(const char *tname)
-//{
-//    luaL_setmetatable(m_ls, tname);
-//}
+void LuaLState::setMetatable(const char *tname)
+{
+    luaL_setmetatable(m_ls, tname);
+}
 
 void LuaLState::testUData(int arg, const char *tname)
 {

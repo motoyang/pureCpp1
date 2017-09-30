@@ -36,22 +36,28 @@
     int o::open_##o(lua_State *ls)                  \
     {
 
-#define LIST_META_TABLE_BEGIN(lo, co)               \
+#define META_TABLE_WITH_DELETE_BEGIN(lo, co)        \
         static const struct luaL_Reg lib_m [] = {   \
         {"__gc",        lo::delete_##lo<co>},
+
+#define META_TABLE_BEGIN                            \
+        static const struct luaL_Reg lib_m [] = {
 
 #define ITEM_IN_TABLE(luaMethod, cppMethod)         \
     {(luaMethod), (cppMethod) },
 
-#define LIST_META_TABLE_END                         \
+#define META_TABLE_END                              \
     {NULL,          NULL}                           \
     };
 
-#define LIST_FUNC_TABLE_BEGIN(lo, co)               \
+#define FUNC_TABLE_WITH_NEW_BEGIN(lo, co)           \
         static const struct luaL_Reg lib_f [] = {   \
         {"create",      lo::new_##lo<co>},
 
-#define LIST_FUNC_TABLE_END                         \
+#define FUNC_TABLE_BEGIN                            \
+        static const struct luaL_Reg lib_f [] = {
+
+#define FUNC_TABLE_END                         \
     {NULL,          NULL}                           \
     };
 
@@ -422,7 +428,7 @@ public:
     int ref(int t);
     void requireF(const char *modname, lua_CFunction openf, int glb);
     void setFuncs(const luaL_Reg *l, int nup);
-//    void setMetatable(const char *tname);
+    void setMetatable(const char *tname);
     void testUData(int arg, const char* tname);
     const char *toLString(int idx, size_t *len);
     void traceBack(lua_State* l1, const char *msg, int level);
@@ -472,8 +478,7 @@ public:
     {
         T **s = (T**)newUserdata(sizeof(T*));  // lua will manage Student** pointer
         *s = new T;
-        getMetatable(mtname);
-        setMetatable(-2);
+        setMetatable(mtname);
 
         // 返回给Lua的只有T*一个变量
         return 1;

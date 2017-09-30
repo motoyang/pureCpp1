@@ -7,8 +7,6 @@ DECLARE_OPENLIB_FUNCTION(spdlogger)
 
 // ---
 
-spdlog::logger* getLogger(lua_State* l);
-
 EXPORT_FUNCTION_TO_LUA(lua_get)
 EXPORT_FUNCTION_TO_LUA(lua_drop)
 EXPORT_FUNCTION_TO_LUA(lua_drop_all)

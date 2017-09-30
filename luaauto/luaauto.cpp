@@ -8,13 +8,13 @@ DEFINE_MODULE_NAME(luaSuperCar, "SuperCar")
 DEFINE_META_TABLE_NAME(luaSuperCar, "F9872759-8308-4DDA-A5C2-740F6E285911")
 
 IMPLEMENT_OPENLIB_METHOD_BEGIN(luaSuperCar)
-    LIST_META_TABLE_BEGIN(luaSuperCar, SuperCar)
+    META_TABLE_WITH_DELETE_BEGIN(luaSuperCar, SuperCar)
         ITEM_IN_TABLE("stealth",            luaSuperCar::l_stealth)
         ITEM_IN_TABLE("dive",               luaSuperCar::l_dive)
-    LIST_META_TABLE_END
+    META_TABLE_END
 
-    LIST_FUNC_TABLE_BEGIN(luaSuperCar, SuperCar)
-    LIST_FUNC_TABLE_END
+    FUNC_TABLE_WITH_NEW_BEGIN(luaSuperCar, SuperCar)
+    FUNC_TABLE_END
 
     REGISTER_LUA_OBJECT_METHODS(luaSuperCar)
     INHERIT_METHOD_FROM_FATHER(luaTesla)
@@ -45,13 +45,13 @@ DEFINE_MODULE_NAME(luaSeafaring, "Seafaring")
 DEFINE_META_TABLE_NAME(luaSeafaring, "A81F2DB0-2B23-4456-BC20-0D37C3D06035")
 
 IMPLEMENT_OPENLIB_METHOD_BEGIN(luaSeafaring)
-    LIST_META_TABLE_BEGIN(luaSeafaring, Seafaring)
+    META_TABLE_WITH_DELETE_BEGIN(luaSeafaring, Seafaring)
         ITEM_IN_TABLE("voyage",            luaSeafaring::l_voyage)
         ITEM_IN_TABLE("dive",              luaSeafaring::l_dive)
-    LIST_META_TABLE_END
+    META_TABLE_END
 
-    LIST_FUNC_TABLE_BEGIN(luaSeafaring, Seafaring)
-    LIST_FUNC_TABLE_END
+    FUNC_TABLE_WITH_NEW_BEGIN(luaSeafaring, Seafaring)
+    FUNC_TABLE_END
 
     REGISTER_LUA_OBJECT_METHODS(luaSeafaring)
 
@@ -83,12 +83,12 @@ DEFINE_MODULE_NAME(luaAirVehicle, "AirVehicle")
 DEFINE_META_TABLE_NAME(luaAirVehicle, "BBCAA017-886E-4F11-AE4E-89A0C88A9418")
 
 IMPLEMENT_OPENLIB_METHOD_BEGIN(luaAirVehicle)
-    LIST_META_TABLE_BEGIN(luaAirVehicle, AirVehicle)
+    META_TABLE_WITH_DELETE_BEGIN(luaAirVehicle, AirVehicle)
         ITEM_IN_TABLE("fly",            luaAirVehicle::l_fly)
-    LIST_META_TABLE_END
+    META_TABLE_END
 
-    LIST_FUNC_TABLE_BEGIN(luaAirVehicle, AirVehicle)
-    LIST_FUNC_TABLE_END
+    FUNC_TABLE_WITH_NEW_BEGIN(luaAirVehicle, AirVehicle)
+    FUNC_TABLE_END
 
     REGISTER_LUA_OBJECT_METHODS(luaAirVehicle)
 
@@ -110,13 +110,13 @@ DEFINE_MODULE_NAME(luaTesla, "Tesla")
 DEFINE_META_TABLE_NAME(luaTesla, "F66A760E-3F7F-4F8B-8824-E16C07E02E7C")
 
 IMPLEMENT_OPENLIB_METHOD_BEGIN(luaTesla)
-    LIST_META_TABLE_BEGIN(luaTesla, Tesla)
+    META_TABLE_WITH_DELETE_BEGIN(luaTesla, Tesla)
         ITEM_IN_TABLE("charge",         luaTesla::l_charge)
         ITEM_IN_TABLE("bluetooth",      luaTesla::l_bluetooth)
-    LIST_META_TABLE_END
+    META_TABLE_END
 
-    LIST_FUNC_TABLE_BEGIN(luaTesla, Tesla)
-    LIST_FUNC_TABLE_END
+    FUNC_TABLE_WITH_NEW_BEGIN(luaTesla, Tesla)
+    FUNC_TABLE_END
 
     REGISTER_LUA_OBJECT_METHODS(luaTesla)
     INHERIT_METHOD_FROM_FATHER(luaCar)
@@ -148,13 +148,13 @@ DEFINE_MODULE_NAME(luaCar, "Car")
 DEFINE_META_TABLE_NAME(luaCar, "77E5E7E8-367F-4A6A-ADE7-3C17A26A0C8D")
 
 IMPLEMENT_OPENLIB_METHOD_BEGIN(luaCar)
-    LIST_META_TABLE_BEGIN(luaCar, Car)
+    META_TABLE_WITH_DELETE_BEGIN(luaCar, Car)
         ITEM_IN_TABLE("music",         luaCar::l_music)
         ITEM_IN_TABLE("navi",          luaCar::l_navi)
-    LIST_META_TABLE_END
+    META_TABLE_END
 
-    LIST_FUNC_TABLE_BEGIN(luaCar, Car)
-    LIST_FUNC_TABLE_END
+    FUNC_TABLE_WITH_NEW_BEGIN(luaCar, Car)
+    FUNC_TABLE_END
 
     REGISTER_LUA_OBJECT_METHODS(luaCar)
     INHERIT_METHOD_FROM_FATHER(luaAuto)
@@ -187,15 +187,15 @@ DEFINE_MODULE_NAME(luaAuto, "Auto")
 DEFINE_META_TABLE_NAME(luaAuto, "E141BB75-DE03-4004-A700-936B68242766")
 
 IMPLEMENT_OPENLIB_METHOD_BEGIN(luaAuto)
-    LIST_META_TABLE_BEGIN(luaAuto, Auto)
+    META_TABLE_WITH_DELETE_BEGIN(luaAuto, Auto)
         ITEM_IN_TABLE("drive",         luaAuto::l_drive)
         ITEM_IN_TABLE("fuel",          luaAuto::l_fuel)
         ITEM_IN_TABLE("maintain",      luaAuto::l_maintain)
         ITEM_IN_TABLE("check",         luaAuto::l_check)
-    LIST_META_TABLE_END
+    META_TABLE_END
 
-    LIST_FUNC_TABLE_BEGIN(luaAuto, Auto)
-    LIST_FUNC_TABLE_END
+    FUNC_TABLE_WITH_NEW_BEGIN(luaAuto, Auto)
+    FUNC_TABLE_END
 
     REGISTER_LUA_OBJECT_METHODS(luaAuto)
 

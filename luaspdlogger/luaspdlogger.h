@@ -3,6 +3,10 @@
 
 // ---
 
+spdlog::logger* getLogger(lua_State* l);
+
+// ---
+
 DECLARE_LUA_OBJECT_BEGIN(lua_spdlogger_object)
     EXPORT_METHOD_TO_LUA(l_trace)
     EXPORT_METHOD_TO_LUA(l_debug)
