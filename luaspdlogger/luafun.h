@@ -13,7 +13,6 @@ EXPORT_FUNCTION_TO_LUA(lua_drop_all)
 EXPORT_FUNCTION_TO_LUA(lua_set_pattern)
 EXPORT_FUNCTION_TO_LUA(lua_set_level)
 
-
 EXPORT_FUNCTION_TO_LUA(lua_basic_logger)
 EXPORT_FUNCTION_TO_LUA(lua_rotating_logger)
 EXPORT_FUNCTION_TO_LUA(lua_daily_logger)

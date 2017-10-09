@@ -25,6 +25,8 @@ unix {
     INSTALLS += target
 }
 
+DESTDIR = ../bin
+
 # Use Precompiled headers (PCH)
 PRECOMPILED_HEADER = precompiled.h
 

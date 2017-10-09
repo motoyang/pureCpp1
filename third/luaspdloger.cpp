@@ -67,8 +67,7 @@ int lua_get(lua_State * ls)
     spdlog::logger **s = (spdlog::logger**)lp.newUserdata(sizeof(spdlog::logger*));
     *s = logger.get();
 
-    lp.getMetatable(lua_spdlogger_object::mt_lua_spdlogger_object);
-    lp.setMetatable(-2);
+    lp.setMetatable(lua_spdlogger_object::mt_lua_spdlogger_object);
 
     // 返回给Lua的只有logger*一个变量
     return 1;
@@ -104,8 +103,7 @@ int lua_basic_logger(lua_State * l)
     spdlog::logger **s = (spdlog::logger**)lp.newUserdata(sizeof(spdlog::logger*));
     *s = bl.get();
 
-    lp.getMetatable(lua_spdlogger_object::mt_lua_spdlogger_object);
-    lp.setMetatable(-2);
+    lp.setMetatable(lua_spdlogger_object::mt_lua_spdlogger_object);
 
     // 返回给Lua的只有logger*一个变量
     return 1;

@@ -305,10 +305,10 @@ public:
     virtual ~LuaState();
 
     // state manipulation
+    static lua_State * newState(lua_Alloc f, void *ud);
     const lua_Number *version() const;
     lua_CFunction atPanic(lua_CFunction panicf);
     lua_State * newThread();
-    static lua_State * newState(lua_Alloc f, void *ud);
     void close();
 
     // garbage-collection function and options
@@ -445,8 +445,11 @@ public:
     Luapp(lua_State * ls, LUA_STATE_RESOUECE_TYPE resourceType = LUA_STATE_RESOUECE_TYPE::SHARED_LUA_STATE);
     virtual ~Luapp();
 
+    // 使用自定义的内存分配方法，创建一个Lua状态机
     static std::shared_ptr<Luapp> create(lua_Alloc f, void *ud);
+    // 使用Lua本身的内存分配方法，创建一个Lua状态机，这是一般最常用的创建Lua状态机的方法
     static std::shared_ptr<Luapp> create();
+    // 获取Luapp中的lua_State*变量
     lua_State* getLuaState() const;
 
     int tableAppend(int idxTo, int idxFrom, bool replaceable);
@@ -493,7 +496,7 @@ public:
         return 0;
     }
 
-    // 把从lua来的调用，转发到相应到c++方法，并返回执行结果
+    // 把从lua来的调用，转发到相应到c++对象的方法，并返回执行结果
     // 注意：输入参数和返回值到处理，是调用者到责任，调用者对此也很清楚
     template<typename T, typename CM, typename... Args>
     auto dispatchToObjectMethod(CM f, Args... args)
@@ -507,6 +510,8 @@ public:
         return fn();
     }
 
+    // 把从lua来的调用，转发到相应到c++函数，并返回执行结果
+    // 注意：输入参数和返回值的处理，是调用者到责任，调用者对此也很清楚
     template<typename F, typename... Args>
     auto dispatchToFunction(F f, Args... args)
     {
@@ -514,6 +519,8 @@ public:
         return fn();
     }
 
+    // 在c++中调用Lua中的方法，Lua的方法名是第一个参数，随后都是Lua方法的参数
+    // 注意：输入参数和返回值的处理，是调用者到责任，调用者对此也很清楚
     template <typename... Args>
     int dispatchToLua(const std::string& name, int countOfResult, Args... args)
     {
@@ -525,6 +532,8 @@ public:
         return pcall(countOfArgs, countOfResult, 0);
     }
 
+    // 在c++中调用Lua中的方法，Lua的方法名是第一个参数，随后都是Lua方法的参数
+    // 注意：输入参数和返回值的处理，是调用者到责任，调用者对此也很清楚
     template <typename... Args>
     int dispatchToLua2(const std::string& name, Args... args)
     {

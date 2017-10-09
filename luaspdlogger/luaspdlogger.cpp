@@ -13,7 +13,12 @@ IMPLEMENT_OPENLIB_METHOD_BEGIN(lua_spdlogger_object)
         ITEM_IN_TABLE("warn",               lua_spdlogger_object::l_warn)
         ITEM_IN_TABLE("error",              lua_spdlogger_object::l_error)
         ITEM_IN_TABLE("critical",           lua_spdlogger_object::l_critical)
+        ITEM_IN_TABLE("should_log",         lua_spdlogger_object::l_should_log)
         ITEM_IN_TABLE("set_level",          lua_spdlogger_object::l_set_level)
+        ITEM_IN_TABLE("level",              lua_spdlogger_object::l_level)
+        ITEM_IN_TABLE("name",               lua_spdlogger_object::l_name)
+        ITEM_IN_TABLE("set_pattern",        lua_spdlogger_object::l_set_pattern)
+        ITEM_IN_TABLE("flush_on",           lua_spdlogger_object::l_flush_on)
     META_TABLE_END
 
     FUNC_TABLE_BEGIN
@@ -33,6 +38,14 @@ spdlog::logger* getLogger(lua_State* ls)
     return *s;
 }
 
+int lua_spdlogger_object::l_should_log(lua_State *ls)
+{
+    Luapp l(ls);
+    int level = l.checkInteger(2);
+    getLogger(ls)->should_log(spdlog::level::level_enum(level));
+    return 0;
+}
+
 int lua_spdlogger_object::l_set_level(lua_State *ls)
 {
     Luapp l(ls);
@@ -41,19 +54,35 @@ int lua_spdlogger_object::l_set_level(lua_State *ls)
     return 0;
 }
 
-int lua_spdlogger_object::l_trace(lua_State * ls)
+int lua_spdlogger_object::l_level(lua_State *ls)
 {
     Luapp l(ls);
-    getLogger(ls)->trace(l.checkString(2));
+    int level = getLogger(ls)->level();
+    l.pushInteger(level);
+    return 1;
+}
 
+int lua_spdlogger_object::l_name(lua_State *ls)
+{
+    Luapp l(ls);
+    std::string name = getLogger(ls)->name();
+    l.pushString(name.c_str());
+    return 1;
+}
+
+int lua_spdlogger_object::l_set_pattern(lua_State *ls)
+{
+    Luapp l(ls);
+    std::string pattern(l.checkString(2));
+    getLogger(ls)->set_pattern(pattern);
     return 0;
 }
 
-int lua_spdlogger_object::l_debug(lua_State * ls)
+int lua_spdlogger_object::l_flush_on(lua_State *ls)
 {
     Luapp l(ls);
-    getLogger(ls)->debug(l.checkString(2));
-
+    int level = l.checkInteger(2);
+    getLogger(ls)->flush_on(spdlog::level::level_enum(level));
     return 0;
 }
 
