@@ -41,8 +41,7 @@ class QBrokenLine : public QGraphicsItem
 
 public:
     QBrokenLine(QGraphicsItem *parent = Q_NULLPTR);
-    void setAngle(int from, int to);
-    void setPoints(const QPointF& from, const QPointF& to);
+    void setAnglePoints(int fromA, const QPointF& fromP, int toA, const QPointF& toP);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

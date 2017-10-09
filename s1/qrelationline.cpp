@@ -165,8 +165,6 @@ void QRelationLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 void QBrokenLine::route()
 {
     const qreal MinLength = 10.0;
-    qreal y, x;
-
     auto extendPoint = [](int angle, const QPointF& p, QSizeF extend) {
         QPointF pReturn;
         switch (angle) {
@@ -186,21 +184,11 @@ void QBrokenLine::route()
             Q_ASSERT(false);
         }
     };
-//    qreal extendX = qMin(MinLength, qAbs(m_fromPoint.x() - m_toPoint.x()));
-//    qreal extendY = qmin(MinLength, qAbs(m_fromPoint.y() - m_toPoint.y()));
-//    QSizeF extend(qMin(MinLength, qAbs(m_fromPoint.x() - m_toPoint.x())),
-//                  qMin(MinLength, qAbs(m_fromPoint.y() - m_toPoint.y())));
-    QSizeF extend(MinLength, MinLength);
 
+    qreal y, x;
+    QSizeF extend(MinLength, MinLength);
     QPointF fromExtend = extendPoint(m_fromAngle, m_fromPoint, extend);
     QPointF toExtend = extendPoint(m_toAngle, m_toPoint, extend);
-//    QPointF center;
-//    if (fromExtend.x() > qMax(m_fromPoint.x(), m_toPoint.x())) {
-//        center.setX(fromExtend.x());
-//    } else if (fromExtend.x() < qMin(m_fromPoint.x(), m_toPoint.x())) {
-//        center.setX(fromExtend.x());
-//    }
-
 
     if (m_fromAngle == 0 && m_toAngle == 0) {
         x = qMax(m_fromPoint.x(), m_toPoint.x()) + MinLength;
@@ -329,16 +317,13 @@ QBrokenLine::QBrokenLine(QGraphicsItem *parent)
 
 }
 
-void QBrokenLine::setAngle(int from, int to)
+void QBrokenLine::setAnglePoints(int fromA, const QPointF &fromP, int toA, const QPointF &toP)
 {
-    m_fromAngle = from;
-    m_toAngle = to;
-}
+    m_fromAngle = fromA;
+    m_toAngle = toA;
 
-void QBrokenLine::setPoints(const QPointF &from, const QPointF &to)
-{
-    m_fromPoint = from;
-    m_toPoint = to;
+    m_fromPoint = fromP;
+    m_toPoint = toP;
 
     route();
 }

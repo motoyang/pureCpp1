@@ -29,8 +29,7 @@ void test1(QGraphicsScene *s)
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
                 QBrokenLine *l = new QBrokenLine();
-                l->setAngle(i * 90, j * 90);
-                l->setPoints(line.p1(), line.p2());
+                l->setAnglePoints(i * 90, line.p1(), j * 90, line.p2());
                 l->setPos(j * 100, y + i * 100);
                 s->addItem(l);
 
